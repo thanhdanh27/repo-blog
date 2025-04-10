@@ -1,0 +1,71 @@
+.header-container{
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    top: 0;
+    left: 0;
+    padding: 1rem 1rem;
+    z-index: 999;
+    background-color: #fff;
+   
+    .logo{
+        width: 140px;
+        cursor: pointer;
+        img{
+            width: 100%;
+        }
+    }
+    .btn-login{
+        color: #1A73e8;
+        font-weight: 500;
+        margin-right: 15px;
+        padding: 1rem 1rem;
+        border-radius: 50px;
+        transition: all linear .2s;
+        &:hover{
+            background-color: #e8f0fe;
+        }
+    }
+    
+}
+.navbar-container{
+    display: flex;
+    gap: 36px;
+    align-items: center;
+    .btn-changeLanguage{
+        cursor: pointer;
+        border: 1px solid #dadce0;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        justify-content: space-around;
+        width: 125px;
+        font-weight: 500;
+        border-radius: 6px;
+     }
+     .sunny-icon{
+        font-size: 2rem;
+        cursor: pointer;
+     }
+     .input-wrap{
+        background-color: #f5f6f7;
+        display: flex;
+        align-items: center;
+        padding: 1rem 1rem;
+        border-radius: 50px;
+        min-width: 300px;
+        .search-icon{
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        input{
+            padding-left: 1rem;
+            width: 100%;
+            outline: none;
+            border: none;
+            background-color: transparent;
+        }
+     }
+}

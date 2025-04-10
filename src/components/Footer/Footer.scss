@@ -1,0 +1,21 @@
+.footer-wrap{
+    padding-left: 10rem;
+    margin-bottom: 2rem;
+    .listFooter li{
+        margin-bottom: 1.4rem;
+        font-weight: 400;
+        cursor: pointer;
+        transition: all linear 0.1s;
+        &:hover{
+            color: #1a73e8;
+        }
+    }
+    border: 3px solid;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(90deg, red, red 25%, #fbbc04, #34a853, #1967d2 75%);
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    padding-top: 1.3rem;
+
+}
