@@ -58,7 +58,7 @@ export default function AdminHeader() {
                   <span>Profile</span>
                 </li>
                 <li className="logout-btn">
-                  <a href="#">
+                  <a href="/">
                     <Login />
                     <span>Logout</span>
                   </a>

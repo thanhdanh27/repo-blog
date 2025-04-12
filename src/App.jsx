@@ -6,12 +6,32 @@ import UserLayout from "./components/Layouts/UserLayout";
 import AdminLayout from "./components/Layouts/AdminLayout";
 import AdminHome from "./pages/AdminHome";
 import EditPost from "./pages/EditPost";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Layout người dùng */}
+
+        <Route
+          path="/auth/signup"
+          element={
+            <UserLayout>
+              <SignUp />
+            </UserLayout>
+          }
+        />
+
+        <Route
+          path="/auth/signin"
+          element={
+            <UserLayout>
+              <SignIn />
+            </UserLayout>
+          }
+        />
 
         <Route
           path="/"

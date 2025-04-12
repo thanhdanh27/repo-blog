@@ -25,7 +25,9 @@ export default function Header() {
           <span>Tiếng Việt</span>
           <ArrowDropDownIcon />
         </div>
-        <Link className="btn-login">Đăng nhập</Link>
+        <Link to="/auth/signup" className="btn-login">
+          Đăng ký
+        </Link>
       </div>
     </div>
   );
