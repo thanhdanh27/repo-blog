@@ -1,0 +1,36 @@
+.sidebar{
+    .sidebar-header{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        border: 1px solid #e1e5eb;
+        height: 60px;
+        span{
+            font-weight: 700;
+            color: #3d5170;
+        }
+    }
+    .list-features{
+        .active-item{
+            color: #007bff;
+            border-left: 3px solid #007bff;
+        }
+        li{
+            display: flex;
+            transition: all linear .2s;
+            align-items: center;
+            padding: 1.5rem 2.5rem;
+            gap: 1rem;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1.4rem;
+            &:hover{
+                background-color: #fbfbfb;
+                color: #007bff;
+                border-left: 3px solid #007bff;
+            }
+        }
+    }
+
+}

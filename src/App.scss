@@ -9,3 +9,47 @@
     margin-top: 7rem;
     
   }
+
+  .admin-layout {
+    display: flex;
+    height: 100vh;
+
+    .sidebar {
+        width: 250px;
+        z-index: 22;
+        background-color: #fff;
+        box-shadow: 0 .125rem 9.375rem rgba(90, 97, 105, .1), 0 .25rem .5rem rgba(90, 97, 105, .12), 0 .9375rem 1.375rem rgba(90, 97, 105, .1), 0 .4375rem 2.1875rem rgba(165, 182, 201, .1);
+      }
+    .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+    .headerAdmin {
+        height: 60px;
+        background-color: #fff;
+        padding: 10px 26px;
+        box-sizing: border-box;
+        z-index: 9;
+        box-shadow: 0 .125rem .625rem rgba(90, 97, 105, .12);
+      }
+      
+    .contentAdmin {
+        flex: 1;
+        padding: 20px 26px;
+        background-color: #f5f6f8;
+        box-sizing: border-box;
+        overflow-y: auto;
+        height: 1000px !important;
+      }
+      .footerAdmin {
+        height: 50px;
+        background-color: #fff;
+        border-top: 1px solid #ccc;
+        padding: 30px 10px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: right;
+      }
+  }
