@@ -6,7 +6,7 @@
     border: 2px solid #ececec;
     .content-card{
         margin-top: 1rem;
-        min-height: 300px;
+        min-height: 220px;
         padding: 0 1.2rem;
         .title-card{
             font-size: 2rem;
@@ -43,7 +43,11 @@
 
 .img-wrap{
     width: 390px;
+    height: 220px;
+    border-bottom: 1px solid #ccc;
     img{
         width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 }

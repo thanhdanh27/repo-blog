@@ -1,26 +1,32 @@
+import { Link } from "react-router-dom";
 import "./PostCard.scss";
-export default function PostCard() {
+export default function PostCard({ data }) {
+  const createdAt = data.createdAt;
+  const date = new Date(createdAt);
+  const formattedDate = date.toLocaleDateString("vi-VN"); // → "13/4/2025"
   return (
-    <div className="postcard-wrap">
-      <div className="img-wrap">
-        <img
-          src="https://developer.chrome.com/static/blog/css-shape/image/hero.png?hl=vi&dcb_=0.8405093293772826"
-          alt="img"
-        />
+    <Link to={`/post/${data.postId}`}>
+      <div className="postcard-wrap">
+        <div className="img-wrap">
+          <img
+            src="https://ps.w.org/mhm-list-postthumbnail/assets/banner-1544x500.png?rev=2463748"
+            alt="img"
+          />
+        </div>
+        <div className="content-card">
+          <p className="title-card">{data.title}</p>
+          {/* <span>Tìm hiểu cách tạo đường cắt thích ứng bằng CSS.</span> */}
+          <ul className="listTag">
+            <li>Html</li>
+            <li>Css</li>
+            <li>Blog</li>
+          </ul>
+        </div>
+        <div className="infoPost">
+          <span>{data.authorId}</span>
+          <span>{formattedDate}</span>
+        </div>
       </div>
-      <div className="content-card">
-        <p className="title-card"> Sử dụng shape() để cắt hình ảnh thích ứng</p>
-        <span>Tìm hiểu cách tạo đường cắt thích ứng bằng CSS.</span>
-        <ul className="listTag">
-          <li>Html</li>
-          <li>Css</li>
-          <li>Blog</li>
-        </ul>
-      </div>
-      <div className="infoPost">
-        <span>Noam Rosenthal</span>
-        <span>8 tháng 4, 2025</span>
-      </div>
-    </div>
+    </Link>
   );
 }

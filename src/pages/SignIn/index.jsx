@@ -25,10 +25,14 @@ export default function SignIn() {
     e.preventDefault();
     try {
       const response = await axios.post(`${baseApi}/Auth/login`, formData);
-      console.log("Đăng ký thành công:", response.data);
+      console.log("Đăng nhập thành công:", response.data);
+      localStorage.setItem("accessToken", JSON.stringify(response.data));
       navigate("/admin");
     } catch (error) {
-      console.error("Lỗi khi đăng ký:", error.response?.data || error.message);
+      console.error(
+        "Lỗi khi đăng nhập:",
+        error.response?.data || error.message
+      );
     }
   };
 

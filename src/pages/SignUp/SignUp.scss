@@ -34,6 +34,17 @@
         .signIn-btn{
             display: flex;
             justify-self: center;
+            flex-direction: column;
+            a{
+                font-size: 1.3rem;
+                margin-top: 1rem;
+                text-decoration: underline;
+                transition: all linear .2s;
+                &:hover{
+                    color: #007bff;
+                   
+                }
+            }
             button{
                 min-width: 110px;
                 outline: none;

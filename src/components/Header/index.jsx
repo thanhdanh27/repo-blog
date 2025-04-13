@@ -9,9 +9,11 @@ import Blog from "../../assets/logo-blog.jpg";
 export default function Header() {
   return (
     <div className="header-container">
-      <div className="logo">
-        <img src={Blog} alt="blog" />
-      </div>
+      <a href="/">
+        <div className="logo">
+          <img src={Blog} alt="blog" />
+        </div>
+      </a>
       <div className="navbar-container">
         <div className="input-wrap">
           <Search className="search-icon" />

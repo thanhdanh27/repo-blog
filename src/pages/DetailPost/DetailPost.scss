@@ -111,6 +111,15 @@
                 }
                 .postRender{
                     margin: 2rem 0;
+                    p{
+                        line-height: 27px;
+                    }
+                    img{
+                        margin: 20px 0;
+                    }
+                    h1,h2,h3,h4{
+                        line-height: 2;
+                    }
                 }
             }
         }

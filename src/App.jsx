@@ -8,8 +8,35 @@ import AdminHome from "./pages/AdminHome";
 import EditPost from "./pages/EditPost";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
+import { BACKEND_URL } from "./constant";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function App() {
+  const baseApi = BACKEND_URL;
+  const [posts, setPosts] = useState([]);
+  const getPosts = async () => {
+    try {
+      const response = await axios.get(`${baseApi}/Post`);
+      // console.log("Danh sách bài viết:", response.data);
+      return response.data; // Trả về để sử dụng nơi khác
+    } catch (error) {
+      console.error(
+        "Lỗi khi lấy bài viết:",
+        error.response?.data || error.message
+      );
+      return []; // Trả mảng rỗng nếu lỗi
+    }
+  };
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const data = await getPosts();
+      setPosts(data);
+    };
+    fetchPosts();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -37,13 +64,13 @@ function App() {
           path="/"
           element={
             <UserLayout>
-              <HomePage />
+              <HomePage data={posts} />
             </UserLayout>
           }
         />
 
         <Route
-          path="/post/:id"
+          path="/post/:postId"
           element={
             <UserLayout>
               <DetailPost />
