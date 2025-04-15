@@ -1,8 +1,21 @@
 import { Code } from "@mui/icons-material";
 import "./SidebarAdmin.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { useState } from "react";
 
 export default function SidebarAdmin() {
+  const { postId } = useParams(); // id sẽ có khi đang edit
+  const location = useLocation();
+  const pathAfterAdmin = location.pathname.split("/admin/")[1];
+  console.log(pathAfterAdmin);
+
+  const [activeIndex, setActiveIndex] = useState(""); // hoặc null nếu chưa chọn gì
+  const menuItems = [
+    { label: "HomePage", href: "/admin", tag: "" },
+    { label: "Upload Post", href: "/admin/upload-post", tag: "upload-post" },
+    { label: "Manager Posts", href: "/admin/manager", tag: "manager" },
+  ];
+
   return (
     <>
       <div className="sidebar-header">
@@ -12,40 +25,22 @@ export default function SidebarAdmin() {
       </div>
       <div className="features-wrap">
         <ul className="list-features">
-          <li>
-            <Link className="active-item" to="/admin/edit">
-              <Code className="feature-icon" />
-              <span>Upload Post</span>
-            </Link>
-          </li>
-
-          <li>
-            <Link to="#">
-              <Code className="feature-icon" />
-              <span>Feature 1</span>
-            </Link>
-          </li>
-
-          <li>
-            <Link to="#">
-              <Code className="feature-icon" />
-              <span>Feature 1</span>
-            </Link>
-          </li>
-
-          <li>
-            <Link to="#">
-              <Code className="feature-icon" />
-              <span>Feature 1</span>
-            </Link>
-          </li>
-
-          <li>
-            <Link to="#">
-              <Code className="feature-icon" />
-              <span>Feature 1</span>
-            </Link>
-          </li>
+          {menuItems.map((item, index) => (
+            <li onClick={() => setActiveIndex(item.tag)} key={index}>
+              <Link
+                className={
+                  (!postId && activeIndex === item.tag) ||
+                  (postId && item.tag === "upload-post")
+                    ? "active-item"
+                    : ""
+                }
+                to={item.href}
+              >
+                <Code className="feature-icon" />
+                <span>{item.label}</span>
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </>

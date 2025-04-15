@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./PostCard.scss";
 export default function PostCard({ data }) {
+  // console.log(data);
   const createdAt = data.createdAt;
   const date = new Date(createdAt);
   const formattedDate = date.toLocaleDateString("vi-VN"); // → "13/4/2025"
@@ -16,14 +17,15 @@ export default function PostCard({ data }) {
         <div className="content-card">
           <p className="title-card">{data.title}</p>
           {/* <span>Tìm hiểu cách tạo đường cắt thích ứng bằng CSS.</span> */}
+
           <ul className="listTag">
-            <li>Html</li>
-            <li>Css</li>
-            <li>Blog</li>
+            {data.categories.map((item, index) => {
+              return <li key={index}>{item.categoryName}</li>;
+            })}
           </ul>
         </div>
         <div className="infoPost">
-          <span>{data.authorId}</span>
+          <span>{data.author.userName}</span>
           <span>{formattedDate}</span>
         </div>
       </div>

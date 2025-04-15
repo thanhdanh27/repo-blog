@@ -1,0 +1,17 @@
+.action-wrap{
+    // display: flex !important;
+    // justify-content: left !important;
+    // align-items: center !important;
+   svg{
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    margin-right: 1rem !important;
+   }
+   .delete-icon{
+    color: red;
+   }
+   .edit-icon{
+    color: #00a558;
+   }
+}

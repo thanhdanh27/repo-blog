@@ -13,10 +13,58 @@ import {
 } from "@mui/icons-material";
 import { BACKEND_URL } from "../../constant";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 export default function EditPost() {
-  // const [value, setValue] = useState("");
-  // const [title, setTitle] = useState("");
+  const { postId } = useParams(); // id sẽ có khi đang edit
+  const isEdit = Boolean(postId); // nếu có id nghĩa là đang edit
+  // console.log(isEdit);
+
+  useEffect(() => {
+    if (isEdit) {
+      axios
+        .get(`${baseApi}/Post/${postId}`)
+        .then((res) => {
+          console.log(res.data);
+          const data = res.data;
+          setTags(data.categories.map((category) => category.categoryName));
+          setFormData({
+            title: data.title,
+            content: data.content,
+            author: {
+              userId: data.author.userId,
+              userName: data.author.userName,
+            },
+            categories: data.categories || [],
+          });
+        })
+        .catch((err) => {
+          console.error("Lỗi lấy dữ liệu:", err);
+        });
+    }
+  }, [postId]);
+
+  const [inputValue, setInputValue] = useState("");
+  const [tags, setTags] = useState([]);
+
+  const handleAddTag = async () => {
+    const trimmedValue = inputValue.trim();
+
+    if (trimmedValue !== "") {
+      try {
+        const res = await axios.post(`${baseApi}/Category`, {
+          categoryName: trimmedValue,
+        });
+
+        // Thành công
+        setTags([...tags, trimmedValue]);
+        setInputValue("");
+      } catch (err) {
+        console.error("Gửi tag thất bại:", err);
+      }
+    }
+  };
+
   const UPLOAD_PRESET = "upload_public";
   const CLOUD_NAME = "djwz3immr"; // lấy từ tên tài khoản cloud của bạn
   const quillRef = useRef(null);
@@ -26,7 +74,11 @@ export default function EditPost() {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    authorId: accessToken.userId,
+    author: {
+      userId: accessToken.userId,
+      userName: accessToken.userName,
+    },
+    categories: [],
   });
 
   const handleChange = (field, value) => {
@@ -108,13 +160,66 @@ export default function EditPost() {
     }
 
     try {
-      const response = await axios.post(`${baseApi}/Post`, formData);
-      console.log("Đăng bài thành công:", response.data);
+      let response;
+      let dataToSend = { ...formData };
+
+      if (isEdit) {
+        // Gọi API cập nhật
+        dataToSend = { ...formData, postId: postId }; // Thêm postId khi cập nhật
+        response = await axios.put(`${baseApi}/Post/${postId}`, dataToSend);
+        console.log("Cập nhật bài viết thành công:", response.data);
+      } else {
+        // Gọi API đăng bài mới
+        response = await axios.post(`${baseApi}/Post`, formData);
+        console.log("Đăng bài mới thành công:", response.data);
+      }
+
+      // Sau khi thành công, bạn có thể redirect, toast, reset form, etc.
     } catch (error) {
-      console.error("Lỗi khi đăng bài:", error.response?.data || error.message);
+      console.error("Lỗi khi gửi bài:", error.response?.data || error.message);
     }
   };
-  console.log(formData.content);
+
+  const handleCategoryToggle = async (tagName, isChecked) => {
+    if (isChecked) {
+      try {
+        // Gọi API GET sau khi tick để lấy ID theo tên
+        const res = await axios.get(`${baseApi}/Category`);
+        const allCategories = res.data;
+        console.log(allCategories);
+
+        // Tìm tag theo tên
+        const found = allCategories.find((cat) => cat.categoryName === tagName);
+
+        if (found) {
+          setFormData((prev) => ({
+            ...prev,
+            categories: [
+              ...prev.categories,
+              {
+                categoryId: found.categoryId,
+                categoryName: found.categoryName,
+              },
+            ],
+          }));
+        } else {
+          console.warn(`Không tìm thấy category có tên: ${tagName}`);
+        }
+      } catch (err) {
+        console.error("Lỗi khi gọi GET categories:", err);
+      }
+    } else {
+      // Bỏ tick thì xoá khỏi formData
+      setFormData((prev) => ({
+        ...prev,
+        categories: prev.categories.filter(
+          (cat) => cat.categoryName !== tagName
+        ),
+      }));
+    }
+  };
+  console.log(formData);
+  // console.log(tags);
 
   return (
     <>
@@ -191,7 +296,7 @@ export default function EditPost() {
               </div>
               <div onClick={handleUploadPost} className="actionBoxItem public">
                 <Public />
-                <span>Public</span>
+                <span>{isEdit ? "Update" : "Public"}</span>
               </div>
             </div>
           </div>
@@ -199,26 +304,35 @@ export default function EditPost() {
             <span className="titleBox">Categories</span>
             <div className="listTag-wrap">
               <ul>
-                <li className="itemTag">
-                  <input type="checkbox" />
-                  <span>Example</span>
-                </li>
-
-                <li className="itemTag">
-                  <input type="checkbox" />
-                  <span>Example</span>
-                </li>
-
-                <li className="itemTag">
-                  <input type="checkbox" />
-                  <span>Example</span>
-                </li>
+                {tags.map((item, index) => {
+                  return (
+                    <li key={index} className="itemTag">
+                      <input
+                        checked={formData.categories.some(
+                          (cat) => cat.categoryName === item
+                        )}
+                        onChange={(e) =>
+                          handleCategoryToggle(item, e.target.checked)
+                        }
+                        type="checkbox"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  );
+                })}
               </ul>
               <div className="addTags-wrap">
                 <div className="inputTag">
-                  <input type="text" placeholder="Add new Tags" />
+                  <input
+                    value={inputValue}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                    }}
+                    type="text"
+                    placeholder="Add new Tags"
+                  />
                 </div>
-                <div className="add-icon">
+                <div onClick={handleAddTag} className="add-icon">
                   <Add />
                 </div>
               </div>

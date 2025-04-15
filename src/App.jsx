@@ -11,10 +11,13 @@ import SignIn from "./pages/SignIn";
 import { BACKEND_URL } from "./constant";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ManagerPost from "./pages/ManagerPost";
 
 function App() {
   const baseApi = BACKEND_URL;
+
   const [posts, setPosts] = useState([]);
+
   const getPosts = async () => {
     try {
       const response = await axios.get(`${baseApi}/Post`);
@@ -34,8 +37,14 @@ function App() {
       const data = await getPosts();
       setPosts(data);
     };
+
     fetchPosts();
   }, []);
+
+  // const fetchAndSetPosts = async () => {
+  //   const data = await getPostsByAuthorId();
+  //   setPostsByAuthorId(data); // quan trọng!
+  // };
 
   return (
     <BrowserRouter>
@@ -89,10 +98,28 @@ function App() {
         />
 
         <Route
-          path="/admin/edit"
+          path="/admin/upload-post"
           element={
             <AdminLayout>
               <EditPost />
+            </AdminLayout>
+          }
+        />
+
+        <Route
+          path="/admin/update-post/:postId"
+          element={
+            <AdminLayout>
+              <EditPost />
+            </AdminLayout>
+          }
+        />
+
+        <Route
+          path="/admin/manager"
+          element={
+            <AdminLayout>
+              <ManagerPost />
             </AdminLayout>
           }
         />

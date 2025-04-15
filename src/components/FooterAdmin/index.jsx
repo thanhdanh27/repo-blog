@@ -5,7 +5,7 @@ export default function FooterAdmin() {
   return (
     <>
       <div className="title-footerAdmin">
-        Copyright © {currentYear} DesignRevision
+        Copyright © {currentYear} ThanhDanhProFE
       </div>
     </>
   );
