@@ -27,7 +27,7 @@ export default function SignIn() {
       const response = await axios.post(`${baseApi}/Auth/login`, formData);
       console.log("Đăng nhập thành công:", response.data);
       localStorage.setItem("accessToken", JSON.stringify(response.data));
-      navigate("/admin");
+      navigate("/");
     } catch (error) {
       console.error(
         "Lỗi khi đăng nhập:",

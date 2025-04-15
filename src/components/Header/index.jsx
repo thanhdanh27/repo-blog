@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Header.scss";
 import LanguageIcon from "@mui/icons-material/Language";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { Logout, Search, Sunny } from "@mui/icons-material";
+import {
+  ArrowDropDown,
+  Login,
+  Logout,
+  Person,
+  Search,
+  Sunny,
+} from "@mui/icons-material";
 import Blog from "../../assets/logo-blog.jpg";
 import { useNavigate } from "react-router-dom";
 
 export default function Header() {
+  const [isOpen, setOpen] = useState(false);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
   const hasToken = !!accessToken;
   const navigate = useNavigate();
@@ -39,13 +47,55 @@ export default function Header() {
           <ArrowDropDownIcon />
         </div>
         {hasToken ? (
-          <a href="/" onClick={handleLogout}>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <Logout />
-              <span>{accessToken?.userName}</span>
+          <div
+            onClick={() => {
+              setOpen(!isOpen);
+            }}
+            className="accountMenu"
+          >
+            <div className="avatar-wrap">
+              <img
+                src="https://designrevision.com/demo/shards-dashboard-react/static/media/0.73476783.jpg"
+                alt="avt"
+              />
             </div>
-          </a>
+            <span className="nameAdmin">{accessToken.userName}</span>
+            <ArrowDropDown />
+            {isOpen && (
+              <div className="dropdownAccount">
+                <ul>
+                  <a target="_blank" blank href="/admin">
+                    <li>
+                      <Person />
+                      <span>Dashboard</span>
+                    </li>
+                  </a>
+                  <li>
+                    <Person />
+                    <span>Profile</span>
+                  </li>
+
+                  <li>
+                    <Person />
+                    <span>Profile</span>
+                  </li>
+                  <li className="logout-btn">
+                    <a href="/" onClick={handleLogout}>
+                      <Login />
+                      <span>Logout</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         ) : (
+          // <a href="/" onClick={handleLogout}>
+          //   <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          //     <Logout />
+          //     <span>{accessToken?.userName}</span>
+          //   </div>
+          // </a>
           <Link to="/auth/signup" className="btn-login">
             Đăng ký
           </Link>

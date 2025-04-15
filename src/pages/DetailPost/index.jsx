@@ -39,7 +39,7 @@ export default function DetailPost() {
   const getCommentsByPostId = async () => {
     try {
       const response = await axios.get(`${baseApi}/Comment/post/${postId}`);
-      console.log("Danh sách comments bài viết:", response.data);
+      // console.log("Danh sách comments bài viết:", response.data);
       return response.data; // Trả về để sử dụng nơi khác
     } catch (error) {
       console.error(
@@ -147,7 +147,7 @@ export default function DetailPost() {
             <div className="breadCrumb">
               <a href="/">Blog</a>
               <ArrowForwardIos className="arrowForward-icon" />
-              <span>{post.postId}</span>
+              <span>{post.title}</span>
             </div>
             <div className="titlePost-wrap">
               <h1 className="titlePost">

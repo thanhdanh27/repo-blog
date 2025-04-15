@@ -9,6 +9,63 @@
     padding: 1rem 1rem;
     z-index: 999;
     background-color: #fff;
+    .accountMenu{
+        display: flex;
+        align-items: center;
+        height: inherit;
+        position: relative;
+        gap: 1rem;
+        border-left: 1px solid #e1e5eb !important;
+        padding-left: 20px;
+        cursor: pointer;
+        .nameAdmin{
+            color: #777 !important;
+        }
+        .avatar-wrap{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            img{
+                width: 100%;
+            }
+    }
+    }
+
+    .dropdownAccount{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 145%;
+        // min-height: 200px;
+        background-color: #fff;
+        z-index: 30;
+        box-shadow: rgba(0, 0, 0, 0.11) 0px 0.5rem 2rem, rgba(0, 0, 0, 0.05) 0px 3px 10px, rgba(0, 0, 0, 0.06) 0px 2px 3px;
+        UL{
+            margin-top: 5px;
+        }
+        .logout-btn{
+            border-top: 1px solid rgb(233, 236, 239);
+        }
+        ul li{
+            padding: 0.7rem 2rem;
+            font-size: 1.3rem;
+            color: rgb(33, 37, 41) !important;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            &:hover{
+                background-color: #fbfbfb;
+            }
+            a{
+                display: inline-flex;
+                align-items: center;
+                width: 100%;
+                gap: 1rem;
+               
+            }
+        }
+    }
    
     .logo{
         width: 140px;

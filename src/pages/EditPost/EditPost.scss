@@ -1,3 +1,7 @@
+.MuiAlert-message{
+    font-size: 1.4rem !important;
+    font-weight: 500;
+}
 .titlePost-wrap{
     span{
         color: #818ea3;
@@ -158,9 +162,20 @@
                     padding: 0 1rem;
                     border-top-right-radius: 4px;
                     border-bottom-right-radius: 4px;
-                    border-left: 0;
+                    transition: all linear .1s;
+                    // border-left: 0;
+                    svg{
+                        color: #5a6169;
+                    }
+                    &:hover{
+                        border-color: #007bff;
+                    }
+                    &:hover svg{
+                        color: #007bff;
+                    }
                 }
                 .inputTag{
+                    border-right: none;
                     height: 35px;
                     padding: 0.6rem 1rem;
                     border: 1px solid #ccc;

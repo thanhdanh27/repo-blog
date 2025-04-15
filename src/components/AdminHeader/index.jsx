@@ -42,7 +42,7 @@ export default function AdminHeader() {
               alt="avt"
             />
           </div>
-          <span className="nameAdmin">{accessToken.userName}</span>
+          <span className="nameAdmin">{accessToken?.userName}</span>
           <ArrowDropDown />
           {isOpen && (
             <div className="dropdownAccount">

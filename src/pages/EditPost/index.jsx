@@ -13,9 +13,17 @@ import {
 } from "@mui/icons-material";
 import { BACKEND_URL } from "../../constant";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Alert, Button } from "@mui/material";
 
 export default function EditPost() {
+  const navigate = useNavigate();
+  const accessToken = JSON.parse(localStorage.getItem("accessToken"));
+  const hasToken = !!accessToken;
+  useEffect(() => {
+    if (!hasToken) navigate("/auth/signup");
+  }, [hasToken, navigate]);
+
   const { postId } = useParams(); // id sẽ có khi đang edit
   const isEdit = Boolean(postId); // nếu có id nghĩa là đang edit
   // console.log(isEdit);
@@ -32,8 +40,8 @@ export default function EditPost() {
             title: data.title,
             content: data.content,
             author: {
-              userId: data.author.userId,
-              userName: data.author.userName,
+              userId: data?.author?.userId,
+              userName: data?.author?.userName,
             },
             categories: data.categories || [],
           });
@@ -44,6 +52,8 @@ export default function EditPost() {
     }
   }, [postId]);
 
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showWarningsAlert, setShowWarningAlert] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [tags, setTags] = useState([]);
 
@@ -68,15 +78,16 @@ export default function EditPost() {
   const UPLOAD_PRESET = "upload_public";
   const CLOUD_NAME = "djwz3immr"; // lấy từ tên tài khoản cloud của bạn
   const quillRef = useRef(null);
-  const accessToken = JSON.parse(localStorage.getItem("accessToken"));
+  const inputRef = useRef(null); // Tạo ref cho input
+
   const baseApi = BACKEND_URL;
 
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     author: {
-      userId: accessToken.userId,
-      userName: accessToken.userName,
+      userId: accessToken?.userId,
+      userName: accessToken?.userName,
     },
     categories: [],
   });
@@ -155,6 +166,10 @@ export default function EditPost() {
 
   const handleUploadPost = async () => {
     if (!formData.title.trim() || isContentEmpty(formData.content)) {
+      setShowWarningAlert(true);
+      setTimeout(() => {
+        setShowWarningAlert(false);
+      }, 2000);
       console.log("Vui lòng nhập đầy đủ tiêu đề và nội dung!");
       return;
     }
@@ -167,12 +182,30 @@ export default function EditPost() {
         // Gọi API cập nhật
         dataToSend = { ...formData, postId: postId }; // Thêm postId khi cập nhật
         response = await axios.put(`${baseApi}/Post/${postId}`, dataToSend);
+
         console.log("Cập nhật bài viết thành công:", response.data);
       } else {
         // Gọi API đăng bài mới
         response = await axios.post(`${baseApi}/Post`, formData);
         console.log("Đăng bài mới thành công:", response.data);
+
+        setFormData({
+          title: "",
+          content: "",
+          author: {
+            userId: accessToken?.userId,
+            userName: accessToken?.userName,
+          },
+          categories: [],
+        });
+        setTags([]);
+        inputRef.current.focus();
       }
+      // 👉 Show success alert
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 2000);
 
       // Sau khi thành công, bạn có thể redirect, toast, reset form, etc.
     } catch (error) {
@@ -223,6 +256,22 @@ export default function EditPost() {
 
   return (
     <>
+      <div style={{ height: "50px" }}>
+        {showWarningsAlert && (
+          <Alert severity="warning">
+            Vui lòng nhập đầy đủ tiêu đề và nội dung!
+          </Alert>
+        )}
+
+        {showSuccessAlert && (
+          <Alert severity="success">
+            {isEdit
+              ? "Đã cập nhật bài viết thành công !"
+              : "Đã đăng tải bài viết thành công !"}
+          </Alert>
+        )}
+      </div>
+
       <div className="titlePost-wrap">
         <span>Blog Posts</span>
         <h3>Add New Post</h3>
@@ -232,6 +281,7 @@ export default function EditPost() {
         <div className="boxEdit-wrap">
           <div className="title-input">
             <input
+              ref={inputRef}
               value={formData.title}
               onChange={(e) => handleChange("title", e.target.value)}
               type="text"
@@ -290,13 +340,17 @@ export default function EditPost() {
               </li>
             </ul>
             <div className="actions-btn">
-              <div className="actionBoxItem save">
-                <Save />
-                <span>Save Draft</span>
+              <div>
+                <Button variant="outlined">
+                  <Save />
+                  Save Draft
+                </Button>
               </div>
-              <div onClick={handleUploadPost} className="actionBoxItem public">
-                <Public />
-                <span>{isEdit ? "Update" : "Public"}</span>
+              <div onClick={handleUploadPost}>
+                <Button variant="contained">
+                  <Public />
+                  {isEdit ? "Update" : "Public"}
+                </Button>
               </div>
             </div>
           </div>
