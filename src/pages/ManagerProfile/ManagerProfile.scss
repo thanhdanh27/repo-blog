@@ -1,0 +1,81 @@
+.wrap-border{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .box-border{
+        width: 800px;
+        max-width: 800px;
+        box-shadow: 0 2px 0 rgba(90, 97, 105, .11), 0 4px 8px rgba(90, 97, 105, .12), 0 10px 10px rgba(90, 97, 105, .06), 0 7px 70px rgba(90, 97, 105, .1);
+        border-radius: 16px;
+        background-color: #fff;
+        padding: 2rem 3rem;
+        .MuiOutlinedInput-input{
+            padding: 12px 14px !important;
+            height: 22px;
+            font-size: 1.3rem;
+        }
+        #outlined-basic{
+            font-size: 1.5rem;
+        }
+        .formProfile{
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+            
+            .fieldInputProfile{
+                flex-wrap: wrap;
+                width: 65% ;
+                align-items: center;
+                gap: 2rem;
+                display: flex;
+                height: 100%;
+                
+                
+            }
+            .uploadAvt-wrap{
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                .changeAvt{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .btn-upload-avt{
+                    margin-top: 1.5rem;
+                }
+                .avt-border{
+                    width: 120px;
+                    height: 120px;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    cursor: pointer;
+                    img{
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+            }
+            margin-top: 4rem;
+           
+            label{
+                font-size: 1.2rem;
+                top: -3px;
+            }
+        }
+        .updatePassword-wrap{
+            margin-top: 2rem;
+            .wrapFieldPassword{
+                margin-top: 3rem;
+                label{
+                    font-size: 1.2rem;
+                    top: -3px;
+                }
+                #outlined-basic{
+                    font-size: 1.5rem;
+                }
+            }
+        }
+    }
+}

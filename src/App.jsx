@@ -12,6 +12,7 @@ import { BACKEND_URL } from "./constant";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ManagerPost from "./pages/ManagerPost";
+import ManagerProfile from "./pages/ManagerProfile";
 
 function App() {
   const baseApi = BACKEND_URL;
@@ -120,6 +121,14 @@ function App() {
           element={
             <AdminLayout>
               <ManagerPost />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/manager-profile"
+          element={
+            <AdminLayout>
+              <ManagerProfile />
             </AdminLayout>
           }
         />

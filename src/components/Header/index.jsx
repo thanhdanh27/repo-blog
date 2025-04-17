@@ -55,7 +55,11 @@ export default function Header() {
           >
             <div className="avatar-wrap">
               <img
-                src="https://designrevision.com/demo/shards-dashboard-react/static/media/0.73476783.jpg"
+                src={
+                  accessToken.avatarURL
+                    ? accessToken.avatarURL
+                    : "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
+                }
                 alt="avt"
               />
             </div>

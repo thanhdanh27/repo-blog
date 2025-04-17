@@ -7,13 +7,17 @@ export default function SidebarAdmin() {
   const { postId } = useParams(); // id sẽ có khi đang edit
   const location = useLocation();
   const pathAfterAdmin = location.pathname.split("/admin/")[1];
-  console.log(pathAfterAdmin);
 
   const [activeIndex, setActiveIndex] = useState(""); // hoặc null nếu chưa chọn gì
   const menuItems = [
     { label: "HomePage", href: "/admin", tag: "" },
     { label: "Upload Post", href: "/admin/upload-post", tag: "upload-post" },
     { label: "Manager Posts", href: "/admin/manager", tag: "manager" },
+    {
+      label: "Manager Profile",
+      href: "/admin/manager-profile",
+      tag: "manager-profile",
+    },
   ];
 
   return (
