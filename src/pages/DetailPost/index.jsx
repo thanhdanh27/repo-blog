@@ -11,8 +11,10 @@ import { useParams } from "react-router-dom";
 import { BACKEND_URL } from "../../constant";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { useAvatar } from "../../AvatarContext";
 
 export default function DetailPost() {
+  const { avatar } = useAvatar();
   const { postId } = useParams();
   const inputRef = useRef(null); // Tạo ref cho input
   const baseApi = BACKEND_URL;
@@ -134,6 +136,8 @@ export default function DetailPost() {
     }
   };
 
+  console.log(post);
+
   return (
     <div className="detailPost-wrap">
       <div className="crumboad-wrap">
@@ -194,12 +198,16 @@ export default function DetailPost() {
           </div>
         </div>
         <div className="box-comment">
-          <span style={{ fontWeight: "600", fontSize: "2rem" }}>Comments</span>
+          <span style={{ fontWeight: "600", fontSize: "2rem" }}>Bình luận</span>
           {hasToken ? (
             <div className="comment-wrap">
               <div className="img-author-cmt">
                 <img
-                  src="https://web.dev/images/authors/bckenny.jpg?hl=vi"
+                  src={
+                    avatar
+                      ? avatar
+                      : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                  }
                   alt="avt"
                 />
               </div>
@@ -230,7 +238,7 @@ export default function DetailPost() {
           ) : (
             <div>
               <a style={{ textDecoration: "underline" }} href="/auth/signin">
-                Login to Comment
+                Đăng nhập để bình luận
               </a>
             </div>
           )}
@@ -244,7 +252,11 @@ export default function DetailPost() {
                 <div key={index} className="comment-item">
                   <div className="img-author-cmt">
                     <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                      src={
+                        item.author.avatarURL
+                          ? item.author.avatarURL
+                          : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                      }
                       alt="avt"
                     />
                   </div>

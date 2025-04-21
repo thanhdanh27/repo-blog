@@ -16,7 +16,22 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button } from "@mui/material";
 
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
 export default function EditPost() {
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const navigate = useNavigate();
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
   const hasToken = !!accessToken;
@@ -35,7 +50,10 @@ export default function EditPost() {
         .then((res) => {
           console.log(res.data);
           const data = res.data;
-          setTags(data.categories.map((category) => category.categoryName));
+          setTags([
+            ...tags,
+            ...data.categories.map((category) => category.categoryName),
+          ]);
           setFormData({
             title: data.title,
             content: data.content,
@@ -57,23 +75,19 @@ export default function EditPost() {
   const [inputValue, setInputValue] = useState("");
   const [tags, setTags] = useState([]);
 
-  const handleAddTag = async () => {
-    const trimmedValue = inputValue.trim();
-
-    if (trimmedValue !== "") {
-      try {
-        const res = await axios.post(`${baseApi}/Category`, {
-          categoryName: trimmedValue,
-        });
-
-        // Thành công
-        setTags([...tags, trimmedValue]);
-        setInputValue("");
-      } catch (err) {
-        console.error("Gửi tag thất bại:", err);
-      }
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get(`${baseApi}/Category`);
+      // console.log(response.data);
+      setTags([...tags, ...response.data.map((item) => item.categoryName)]);
+    } catch (err) {
+      setError(err.message || "Có lỗi xảy ra");
     }
   };
+
+  useEffect(() => {
+    fetchTags();
+  }, []);
 
   const UPLOAD_PRESET = "upload_public";
   const CLOUD_NAME = "djwz3immr"; // lấy từ tên tài khoản cloud của bạn
@@ -213,13 +227,31 @@ export default function EditPost() {
     }
   };
 
+  const handleAddTag = async () => {
+    const trimmedValue = inputValue.trim();
+
+    if (trimmedValue !== "") {
+      try {
+        const res = await axios.post(`${baseApi}/Category`, {
+          categoryName: trimmedValue,
+        });
+
+        // Thành công
+        setTags([...tags, trimmedValue]);
+        setInputValue("");
+      } catch (err) {
+        console.error("Gửi tag thất bại:", err);
+      }
+    }
+  };
+
   const handleCategoryToggle = async (tagName, isChecked) => {
     if (isChecked) {
       try {
         // Gọi API GET sau khi tick để lấy ID theo tên
         const res = await axios.get(`${baseApi}/Category`);
         const allCategories = res.data;
-        console.log(allCategories);
+        // console.log(allCategories);
 
         // Tìm tag theo tên
         const found = allCategories.find((cat) => cat.categoryName === tagName);
@@ -252,7 +284,7 @@ export default function EditPost() {
     }
   };
   console.log(formData);
-  // console.log(tags);
+  console.log("tags", tags);
 
   return (
     <>
@@ -274,7 +306,7 @@ export default function EditPost() {
 
       <div className="titlePost-wrap">
         <span>Blog Posts</span>
-        <h3>Add New Post</h3>
+        <h3>Thêm vài viết mới</h3>
       </div>
 
       <div className="edit-container">
@@ -285,7 +317,7 @@ export default function EditPost() {
               value={formData.title}
               onChange={(e) => handleChange("title", e.target.value)}
               type="text"
-              placeholder="Your Post Title"
+              placeholder="Tiêu đề bài viết"
             />
           </div>
           <ReactQuill
@@ -297,7 +329,7 @@ export default function EditPost() {
         </div>
         <div className="infoPost-wrap">
           <div className="actionsBox">
-            <span className="titleBox">Actions</span>
+            <span className="titleBox">Hành động</span>
             <ul>
               <li className="itemActions">
                 <div className="infoActionItem">
@@ -341,23 +373,64 @@ export default function EditPost() {
             </ul>
             <div className="actions-btn">
               <div>
-                <Button variant="outlined">
-                  <Save />
-                  Save Draft
+                <Button variant="outlined" onClick={handleClickOpen}>
+                  Mở bảng phân loại
                 </Button>
+                <Dialog
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {"Chọn phân loại"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      <ul>
+                        {tags.map((item, index) => {
+                          return (
+                            <li key={index} className="itemTag">
+                              <input
+                                checked={formData.categories.some(
+                                  (cat) => cat.categoryName === item
+                                )}
+                                onChange={(e) =>
+                                  handleCategoryToggle(item, e.target.checked)
+                                }
+                                type="checkbox"
+                              />
+                              <span>{item}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    {/* <Button onClick={handleClose}>Disagree</Button> */}
+                    <Button onClick={handleClose} autoFocus>
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                {/* <Button variant="outlined">
+                  <Save />
+                  Lưu bản nháp
+                </Button> */}
               </div>
               <div onClick={handleUploadPost}>
                 <Button variant="contained">
                   <Public />
-                  {isEdit ? "Update" : "Public"}
+                  {isEdit ? "Cập nhật" : "Đăng bài"}
                 </Button>
               </div>
             </div>
           </div>
           <div className="actionsBox category">
-            <span className="titleBox">Categories</span>
+            <span className="titleBox">Thêm phân loại</span>
             <div className="listTag-wrap">
-              <ul>
+              {/* <ul>
                 {tags.map((item, index) => {
                   return (
                     <li key={index} className="itemTag">
@@ -374,7 +447,7 @@ export default function EditPost() {
                     </li>
                   );
                 })}
-              </ul>
+              </ul> */}
               <div className="addTags-wrap">
                 <div className="inputTag">
                   <input
@@ -383,7 +456,7 @@ export default function EditPost() {
                       setInputValue(e.target.value);
                     }}
                     type="text"
-                    placeholder="Add new Tags"
+                    placeholder="Thêm tag mới"
                   />
                 </div>
                 <div onClick={handleAddTag} className="add-icon">

@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ManagerPost from "./pages/ManagerPost";
 import ManagerProfile from "./pages/ManagerProfile";
+import { AvatarProvider } from "./AvatarContext";
+import ForgetPage from "./pages/ForgetPage";
 
 function App() {
   const baseApi = BACKEND_URL;
@@ -42,11 +44,6 @@ function App() {
     fetchPosts();
   }, []);
 
-  // const fetchAndSetPosts = async () => {
-  //   const data = await getPostsByAuthorId();
-  //   setPostsByAuthorId(data); // quan trọng!
-  // };
-
   return (
     <BrowserRouter>
       <Routes>
@@ -57,6 +54,15 @@ function App() {
           element={
             <UserLayout>
               <SignUp />
+            </UserLayout>
+          }
+        />
+
+        <Route
+          path="/auth/forgot-password"
+          element={
+            <UserLayout>
+              <ForgetPage />
             </UserLayout>
           }
         />

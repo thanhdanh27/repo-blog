@@ -35,7 +35,7 @@ export default function Footer() {
               Đóng góp
             </span>
             <li>Nội dung liên quan</li>
-            <li>Bản cập nhật Chromium</li>
+
             <li>Nghiên cứu điển hình</li>
             <li>Podcast và chương trình</li>
           </ul>
@@ -55,7 +55,6 @@ export default function Footer() {
             <li>@ChromiumDev trên X</li>
             <li>Chrome dành cho nhà phát triển trên LinkedIn</li>
             <li>YouTube</li>
-            <li>RSS</li>
           </ul>
         </Grid>
       </Grid>

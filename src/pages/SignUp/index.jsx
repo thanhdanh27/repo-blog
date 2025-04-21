@@ -38,7 +38,7 @@ export default function SignUp() {
       <div className="boxSignIn">
         <div className="formSignIn">
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <span>Create New Account</span>
+            <span>Tạo tài khoản mới</span>
           </div>
           <form onSubmit={handleRegister} className="form">
             <div className="formItem">
@@ -54,7 +54,7 @@ export default function SignUp() {
             </div>
 
             <div className="formItem">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">Email</label>
               <input
                 required
                 onChange={handleChange}
@@ -66,20 +66,20 @@ export default function SignUp() {
             </div>
 
             <div className="formItem">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mật khẩu</label>
               <input
                 required
                 onChange={handleChange}
                 value={formData.password}
                 id="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Mật khẩu"
               />
             </div>
 
             <div className="signIn-btn">
-              <button type="submit">Sign Up</button>
-              <a href="/auth/signin">Already have an account</a>
+              <button type="submit">Đăng ký</button>
+              <a href="/auth/signin">Bạn đã có tài khoản?</a>
             </div>
           </form>
         </div>

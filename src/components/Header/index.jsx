@@ -13,8 +13,10 @@ import {
 } from "@mui/icons-material";
 import Blog from "../../assets/logo-blog.jpg";
 import { useNavigate } from "react-router-dom";
+import { useAvatar } from "../../AvatarContext";
 
 export default function Header() {
+  const { avatar } = useAvatar();
   const [isOpen, setOpen] = useState(false);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
   const hasToken = !!accessToken;
@@ -24,7 +26,7 @@ export default function Header() {
     localStorage.removeItem("accessToken");
     navigate("/"); // điều hướng sau khi xóa token
   };
-  // console.log(hasToken);
+  console.log(avatar);
 
   return (
     <div className="header-container">
@@ -56,8 +58,8 @@ export default function Header() {
             <div className="avatar-wrap">
               <img
                 src={
-                  accessToken.avatarURL
-                    ? accessToken.avatarURL
+                  avatar
+                    ? avatar
                     : "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
                 }
                 alt="avt"
@@ -68,25 +70,17 @@ export default function Header() {
             {isOpen && (
               <div className="dropdownAccount">
                 <ul>
-                  <a target="_blank" blank href="/admin">
+                  <a href="/admin">
                     <li>
                       <Person />
-                      <span>Dashboard</span>
+                      <span>Admin</span>
                     </li>
                   </a>
-                  <li>
-                    <Person />
-                    <span>Profile</span>
-                  </li>
 
-                  <li>
-                    <Person />
-                    <span>Profile</span>
-                  </li>
                   <li className="logout-btn">
                     <a href="/" onClick={handleLogout}>
                       <Login />
-                      <span>Logout</span>
+                      <span>Đăng xuất</span>
                     </a>
                   </li>
                 </ul>

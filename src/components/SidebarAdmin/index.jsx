@@ -1,24 +1,48 @@
 import { Code } from "@mui/icons-material";
+import { jwtDecode } from "jwt-decode";
 import "./SidebarAdmin.scss";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SidebarAdmin() {
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    const accessToken = JSON.parse(localStorage.getItem("accessToken"));
+    if (accessToken) {
+      try {
+        const decoded = jwtDecode(accessToken.accessToken);
+
+        setRole(decoded.Role);
+      } catch (err) {
+        console.error("Lỗi khi decode token:", err);
+      }
+    }
+  }, []);
+
   const { postId } = useParams(); // id sẽ có khi đang edit
-  const location = useLocation();
-  const pathAfterAdmin = location.pathname.split("/admin/")[1];
 
   const [activeIndex, setActiveIndex] = useState(""); // hoặc null nếu chưa chọn gì
-  const menuItems = [
-    { label: "HomePage", href: "/admin", tag: "" },
-    { label: "Upload Post", href: "/admin/upload-post", tag: "upload-post" },
-    { label: "Manager Posts", href: "/admin/manager", tag: "manager" },
+  const menuItemsAdmin = [
+    { label: "Trang chủ", href: "/admin", tag: "" },
+    { label: "Đăng bài viết", href: "/admin/upload-post", tag: "upload-post" },
+    { label: "Quản lý bài viết", href: "/admin/manager", tag: "manager" },
     {
-      label: "Manager Profile",
+      label: "Quản lý trang cá nhân",
       href: "/admin/manager-profile",
       tag: "manager-profile",
     },
   ];
+
+  const menuItemsUser = [
+    { label: "Trang chủ", href: "/admin", tag: "" },
+    {
+      label: "Quản lý trang cá nhân",
+      href: "/admin/manager-profile",
+      tag: "manager-profile",
+    },
+  ];
+  console.log(role);
 
   return (
     <>
@@ -29,22 +53,41 @@ export default function SidebarAdmin() {
       </div>
       <div className="features-wrap">
         <ul className="list-features">
-          {menuItems.map((item, index) => (
-            <li onClick={() => setActiveIndex(item.tag)} key={index}>
-              <Link
-                className={
-                  (!postId && activeIndex === item.tag) ||
-                  (postId && item.tag === "upload-post")
-                    ? "active-item"
-                    : ""
-                }
-                to={item.href}
-              >
-                <Code className="feature-icon" />
-                <span>{item.label}</span>
-              </Link>
-            </li>
-          ))}
+          {role === "Admin" &&
+            menuItemsAdmin.map((item, index) => (
+              <li onClick={() => setActiveIndex(item.tag)} key={index}>
+                <Link
+                  className={
+                    (!postId && activeIndex === item.tag) ||
+                    (postId && item.tag === "upload-post")
+                      ? "active-item"
+                      : ""
+                  }
+                  to={item.href}
+                >
+                  <Code className="feature-icon" />
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            ))}
+
+          {role === undefined &&
+            menuItemsUser.map((item, index) => (
+              <li onClick={() => setActiveIndex(item.tag)} key={index}>
+                <Link
+                  className={
+                    (!postId && activeIndex === item.tag) ||
+                    (postId && item.tag === "upload-post")
+                      ? "active-item"
+                      : ""
+                  }
+                  to={item.href}
+                >
+                  <Code className="feature-icon" />
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            ))}
         </ul>
       </div>
     </>

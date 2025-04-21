@@ -8,10 +8,12 @@ import {
 import "./AdminHeader.scss";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAvatar } from "../../AvatarContext";
 
 export default function AdminHeader() {
   const [isOpen, setOpen] = useState(false);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
+  const [avtUrl, setAvtUrl] = useState(accessToken.avatarURL);
 
   const navigate = useNavigate();
 
@@ -20,6 +22,7 @@ export default function AdminHeader() {
     localStorage.removeItem("accessToken");
     navigate("/"); // điều hướng sau khi xóa token
   };
+  const { avatar } = useAvatar();
   return (
     <>
       <div className="header-search">
@@ -39,8 +42,8 @@ export default function AdminHeader() {
           <div className="avatar-wrap">
             <img
               src={
-                accessToken.avatarURL
-                  ? accessToken.avatarURL
+                avatar
+                  ? avatar
                   : "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
               }
               alt="avt"
@@ -51,32 +54,23 @@ export default function AdminHeader() {
           {isOpen && (
             <div className="dropdownAccount">
               <ul>
-                <a target="_blank" blank href="/">
+                <a href="/">
                   <li>
                     <Person />
                     <span>Blog</span>
                   </li>
                 </a>
-                <li>
-                  <Person />
-                  <span>Profile</span>
-                </li>
-                <li>
-                  <Person />
-                  <span>Profile</span>
-                </li>
-                <li>
-                  <Person />
-                  <span>Profile</span>
-                </li>
-                <li>
-                  <Person />
-                  <span>Profile</span>
-                </li>
+
+                <a href="/admin/manager-profile">
+                  <li>
+                    <Person />
+                    <span>Trang cá nhân</span>
+                  </li>
+                </a>
                 <li className="logout-btn">
                   <a href="/" onClick={handleLogout}>
                     <Login />
-                    <span>Logout</span>
+                    <span>Đăng xuất</span>
                   </a>
                 </li>
               </ul>

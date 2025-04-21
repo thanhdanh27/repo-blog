@@ -1,4 +1,11 @@
-import { Avatar, Button, CircularProgress, TextField } from "@mui/material";
+import {
+  Alert,
+  Avatar,
+  Button,
+  CircularProgress,
+  Snackbar,
+  TextField,
+} from "@mui/material";
 import "./ManagerProfile.scss";
 import { FileUpload } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -8,8 +15,10 @@ import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import { BACKEND_URL } from "../../constant";
 import axios from "axios";
+import { useAvatar } from "../../AvatarContext";
 
 export default function ManagerProfile() {
+  const { setAvatar } = useAvatar();
   const [loader, setLoader] = useState(false);
   const baseApi = BACKEND_URL;
   const [user, setUser] = useState(null);
@@ -43,6 +52,7 @@ export default function ManagerProfile() {
         ...prev,
         avatarURL: uploadedURL,
       }));
+      setAvatar(uploadedURL);
     } catch (error) {
       console.error("Lỗi khi upload:", error);
     }
@@ -100,6 +110,21 @@ export default function ManagerProfile() {
     fetchUser();
   }, [accessToken.userName]);
 
+  const handleCancelInfo = () => {
+    const dob = user?.dob === "0001-01-01" ? null : dayjs(user?.dob);
+    accessToken.avatarURL = formData.avatarURL;
+    setAvatar(formData.avatarURL);
+    localStorage.setItem("accessToken", JSON.stringify(accessToken));
+    setFormData({
+      userId: user?.userId,
+      userName: user?.userName || "",
+      email: user?.email || "",
+      avatarURL: formData.avatarURL,
+      dob: dob === null ? dob : dob.format("YYYY-MM-DD"), // Convert từ string sang dayjs
+    });
+    setIsEdit(!isEdit);
+  };
+
   const handleSaveInfo = async () => {
     setIsEdit(!isEdit);
     try {
@@ -112,8 +137,11 @@ export default function ManagerProfile() {
         email: formData.email,
       });
 
-      console.log("Cập nhật user thành công:", response.data);
+      // console.log("Cập nhật user thành công:", response.data);
+      setState({ ...state, open: true });
+
       accessToken.userName = formData.userName; // Ví dụ thay đổi giá trị key2
+      setAvatar(formData.avatarURL);
       accessToken.avatarURL = formData.avatarURL;
 
       // Bước 3: Lưu lại accessToken đã cập nhật vào localStorage
@@ -138,6 +166,7 @@ export default function ManagerProfile() {
       setIsEdit2(!isEdit2);
       formPassword.oldPassword = "";
       formPassword.newPassword = "";
+      setState2(true);
       console.log("Cập nhật password thành công:", response.data);
     } catch (error) {
       console.error("Lỗi khi update password:", error);
@@ -147,12 +176,61 @@ export default function ManagerProfile() {
   // console.log(formData);
   console.log(formPassword);
 
+  const [state, setState] = useState({
+    open: false,
+    vertical: "bottom",
+    horizontal: "right",
+  });
+
+  const [state2, setState2] = useState(false);
+
+  const { vertical, horizontal, open } = state;
+
+  const handleClose = () => {
+    setState({ ...state, open: false });
+  };
+  const handleClose2 = () => {
+    setState2(!state2);
+  };
+
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={state2}
+        onClose={handleClose2}
+        autoHideDuration={2000}
+        key="snackbar-password"
+      >
+        <Alert
+          onClose={handleClose2}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã cập nhật mật khẩu thành công !
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={open}
+        onClose={handleClose}
+        key="snackbar-profile"
+        autoHideDuration={2000}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã cập nhật thành công !
+        </Alert>
+      </Snackbar>
       <div className="wrap-border">
         <div className="box-border">
           <p style={{ color: "868e96", fontWeight: "600" }}>
-            Setup your general profile details.
+            Thiết lập thông tin hồ sơ chung của bạn.
           </p>
           <div className="formProfile">
             <div className="fieldInputProfile">
@@ -202,16 +280,28 @@ export default function ManagerProfile() {
                 label="Mô tả"
                 variant="outlined"
               />
-              <Button
-                onClick={() => {
-                  setIsEdit(!isEdit);
-                }}
-                disabled={isEdit}
-                size="large"
-                variant="outlined"
-              >
-                Chỉnh sửa
-              </Button>
+              {isEdit && (
+                <Button
+                  onClick={() => {
+                    handleCancelInfo();
+                  }}
+                  size="large"
+                  variant="outlined"
+                >
+                  Hủy
+                </Button>
+              )}
+              {!isEdit && (
+                <Button
+                  onClick={() => {
+                    setIsEdit(!isEdit);
+                  }}
+                  size="large"
+                  variant="outlined"
+                >
+                  Chỉnh sửa
+                </Button>
+              )}
               {isEdit && (
                 <Button
                   onClick={() => {
@@ -220,7 +310,7 @@ export default function ManagerProfile() {
                   variant="contained"
                   size="large"
                 >
-                  Save Change
+                  Lưu thay đổi
                 </Button>
               )}
             </div>
@@ -267,7 +357,8 @@ export default function ManagerProfile() {
                     }}
                     htmlFor="upload-photo"
                   >
-                    Upload Image <FileUpload />
+                    Tải ảnh lên
+                    <FileUpload />
                   </label>
                 </Button>
                 <input
@@ -283,7 +374,7 @@ export default function ManagerProfile() {
           </div>
           <div className="updatePassword-wrap">
             <p style={{ color: "868e96", fontWeight: "600" }}>
-              Change your current password.
+              Thay đổi mật khẩu hiện tại của bạn.
             </p>
             <div className="wrapFieldPassword">
               <TextField
@@ -315,17 +406,35 @@ export default function ManagerProfile() {
               />
             </div>
 
-            <Button
-              style={{ marginTop: "2rem" }}
-              variant="outlined"
-              size="large"
-              onClick={() => {
-                setIsEdit2(!isEdit2);
-              }}
-              disabled={isEdit2}
-            >
-              Chỉnh sửa
-            </Button>
+            {isEdit2 && (
+              <Button
+                style={{ marginTop: "2rem" }}
+                variant="outlined"
+                size="large"
+                onClick={() => {
+                  setFormPassword((prev) => ({
+                    ...prev,
+                    newPassword: "",
+                    oldPassword: "",
+                  }));
+                  setIsEdit2(!isEdit2);
+                }}
+              >
+                Hủy
+              </Button>
+            )}
+            {!isEdit2 && (
+              <Button
+                style={{ marginTop: "2rem" }}
+                variant="outlined"
+                size="large"
+                onClick={() => {
+                  setIsEdit2(!isEdit2);
+                }}
+              >
+                Chỉnh sửa
+              </Button>
+            )}
 
             {isEdit2 && (
               <Button
@@ -336,7 +445,7 @@ export default function ManagerProfile() {
                   handleUpdatePassword();
                 }}
               >
-                Save Change
+                Lưu thay đổi
               </Button>
             )}
           </div>

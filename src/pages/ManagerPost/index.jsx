@@ -126,10 +126,10 @@ export default function ManagerPost() {
           <TableHead>
             <TableRow>
               <StyledTableCell>STT</StyledTableCell>
-              <StyledTableCell align="right">Title</StyledTableCell>
-              <StyledTableCell align="right">Date</StyledTableCell>
-              <StyledTableCell align="right">Author</StyledTableCell>
-              <StyledTableCell align="right">Action</StyledTableCell>
+              <StyledTableCell align="right">Tiêu đề</StyledTableCell>
+              <StyledTableCell align="right">Ngày đăng</StyledTableCell>
+              <StyledTableCell align="right">Tác giả</StyledTableCell>
+              <StyledTableCell align="right">Hành động</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>

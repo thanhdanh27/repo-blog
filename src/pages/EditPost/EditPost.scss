@@ -192,3 +192,20 @@
         }
     }
 }
+
+.MuiDialog-paper{
+    width: 600px;
+    font-size: 1.5rem;
+    h2{
+        font-size: 1.6rem;
+        font-weight: 600;
+    }
+    ul{
+        font-size: 1.4rem;
+        li{
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    }
+}
