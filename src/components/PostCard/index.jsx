@@ -10,13 +10,21 @@ export default function PostCard({ data }) {
       <div className="postcard-wrap">
         <div className="img-wrap">
           <img
-            src="https://ps.w.org/mhm-list-postthumbnail/assets/banner-1544x500.png?rev=2463748"
+            src={
+              data?.thumbailURL
+                ? data.thumbailURL
+                : "https://ps.w.org/mhm-list-postthumbnail/assets/banner-1544x500.png?rev=2463748"
+            }
             alt="img"
           />
         </div>
         <div className="content-card">
           <p className="title-card">{data.title}</p>
           {/* <span>Tìm hiểu cách tạo đường cắt thích ứng bằng CSS.</span> */}
+          <div
+            className="postRender clamp-3-lines"
+            dangerouslySetInnerHTML={{ __html: data.content }}
+          />
 
           <ul className="listTag">
             {data.categories.map((item, index) => {

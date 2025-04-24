@@ -1,6 +1,8 @@
 import {
   ArrowDropDown,
+  FiberNew,
   Login,
+  ManageAccounts,
   Notifications,
   Person,
   Search,
@@ -56,14 +58,14 @@ export default function AdminHeader() {
               <ul>
                 <a href="/">
                   <li>
-                    <Person />
-                    <span>Blog</span>
+                    <FiberNew />
+                    <span>Blog Site</span>
                   </li>
                 </a>
 
                 <a href="/admin/manager-profile">
                   <li>
-                    <Person />
+                    <ManageAccounts />
                     <span>Trang cá nhân</span>
                   </li>
                 </a>

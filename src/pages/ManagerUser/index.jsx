@@ -1,5 +1,6 @@
 import {
   Alert,
+  Button,
   Paper,
   Snackbar,
   styled,
@@ -10,13 +11,22 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import "./ManagerPost.scss";
 import { DeleteForever, EditDocument } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../../constant";
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import deleteIcon from "../../assets/deleteIcon.svg";
 import editIcon from "../../assets/editIcon.svg";
 
@@ -40,8 +50,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function ManagerPost() {
+export default function ManagerUser() {
   const [postsByAuthorId, setPostsByAuthorId] = useState([]);
+  const [user, setUser] = useState([]);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
   const baseApi = BACKEND_URL;
 
@@ -54,8 +65,8 @@ export default function ManagerPost() {
 
   // ✅ Hàm reload lại danh sách
   const onReload = async () => {
-    const data = await getPostsByAuthorId();
-    setPostsByAuthorId(data);
+    const data = await getAllUsers();
+    setUser(data);
   };
 
   const handleDeletePost = async (postId) => {
@@ -73,27 +84,24 @@ export default function ManagerPost() {
       console.error("Lỗi xoá bài viết:", error.response?.data || error.message);
     }
   };
-  const getPostsByAuthorId = async () => {
+
+  const getAllUsers = async () => {
     try {
-      const response = await axios.get(
-        `${baseApi}/Post/ByAuthor/${accessToken.userId}`
-      );
-      console.log("Danh sách bài viết theo user:", response.data);
+      const response = await axios.get(`${baseApi}/User`);
+      // console.log("Danh sách user:", response.data);
       return response.data; // Trả về để sử dụng nơi khác
     } catch (error) {
-      console.error(
-        "Lỗi khi lấy bài viết:",
-        error.response?.data || error.message
-      );
+      console.error("Lỗi khi lấy user:", error.response?.data || error.message);
       return []; // Trả mảng rỗng nếu lỗi
     }
   };
+
   useEffect(() => {
-    const fetchPostsByAuthorId = async () => {
-      const data = await getPostsByAuthorId();
-      setPostsByAuthorId(data);
+    const fetchAllUsers = async () => {
+      const data = await getAllUsers();
+      setUser(data);
     };
-    fetchPostsByAuthorId();
+    fetchAllUsers();
   }, []);
 
   const [state, setState] = useState({
@@ -101,13 +109,96 @@ export default function ManagerPost() {
     vertical: "bottom",
     horizontal: "right",
   });
+
   const { vertical, horizontal, open } = state;
   const handleClose = () => {
     setState({ ...state, open: false });
   };
 
+  const [openDialog, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClickClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
+      <Dialog
+        open={openDialog}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Cập nhật người dùng"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <div className="formProfile">
+              <div className="fieldInputProfile">
+                <TextField
+                  id="outlined-basic"
+                  label="Username"
+                  variant="outlined"
+                  // value={formData.userName}
+                  // disabled={!isEdit}
+                  // onChange={(e) =>
+                  //   setFormData((prev) => ({
+                  //     ...prev,
+                  //     userName: e.target.value,
+                  //   }))
+                  // }
+                />
+                <TextField
+                  id="outlined-basic"
+                  label="Email"
+                  variant="outlined"
+                  // value={formData.email}
+                  // disabled={!isEdit}
+                  // onChange={(e) =>
+                  //   setFormData((prev) => ({
+                  //     ...prev,
+                  //     email: e.target.value,
+                  //   }))
+                  // }
+                />
+
+                <LocalizationProvider
+                  adapterLocale="vi"
+                  dateAdapter={AdapterDayjs}
+                >
+                  <DatePicker
+                    // disabled={!isEdit}
+                    // value={
+                    //   dayjs(formData.dob).isValid() ? dayjs(formData.dob) : null
+                    // }
+                    // onChange={handleDateChange}
+                    label="Ngày sinh"
+                  />
+                </LocalizationProvider>
+                <TextField
+                  // disabled={!isEdit}
+                  id="outlined-basic"
+                  label="Role"
+                  variant="outlined"
+                />
+              </div>
+            </div>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClickClose} autoFocus>
+            Cập nhật
+          </Button>
+          <Button onClick={handleClickClose} autoFocus>
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={open}
@@ -128,14 +219,14 @@ export default function ManagerPost() {
           <TableHead>
             <TableRow>
               <StyledTableCell>STT</StyledTableCell>
-              <StyledTableCell align="right">Tiêu đề</StyledTableCell>
-              <StyledTableCell align="right">Ngày đăng</StyledTableCell>
-              <StyledTableCell align="right">Tác giả</StyledTableCell>
+              <StyledTableCell align="right">Usename</StyledTableCell>
+              <StyledTableCell align="right">Email</StyledTableCell>
+              <StyledTableCell align="right">Ngày sinh</StyledTableCell>
               <StyledTableCell align="right">Hành động</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {postsByAuthorId.map((item, index) => {
+            {user.map((item, index) => {
               return (
                 <StyledTableRow
                   key={index}
@@ -154,13 +245,9 @@ export default function ManagerPost() {
                     }}
                     align="right"
                   >
-                    {item.title}
+                    {item.userName}
                   </StyledTableCell>
-                  <StyledTableCell align="right">
-                    {new Intl.DateTimeFormat("vi-VN").format(
-                      new Date(item.createdAt)
-                    )}
-                  </StyledTableCell>
+                  <StyledTableCell align="right">{item.email}</StyledTableCell>
                   <StyledTableCell
                     style={{
                       maxWidth: "130px",
@@ -171,10 +258,12 @@ export default function ManagerPost() {
                     }}
                     align="right"
                   >
-                    {item.author.userName}
+                    {item.dob && dayjs(item.dob).isValid()
+                      ? dayjs(item.dob).format("DD/MM/YYYY")
+                      : "Null"}
                   </StyledTableCell>
                   <StyledTableCell className="action-wrap" align="right">
-                    <Link to={`/admin/update-post/${item.postId}`}>
+                    <span onClick={handleClickOpen}>
                       <img
                         style={{ cursor: "pointer" }}
                         src={editIcon}
@@ -182,12 +271,9 @@ export default function ManagerPost() {
                         height="20px"
                         alt="icon"
                       />
-                    </Link>
-                    <span
-                      onClick={() => {
-                        handleDeletePost(item.postId);
-                      }}
-                    >
+                    </span>
+
+                    <span>
                       <img
                         style={{ cursor: "pointer", marginLeft: "1rem" }}
                         src={deleteIcon}

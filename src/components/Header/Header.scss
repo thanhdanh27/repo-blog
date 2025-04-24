@@ -91,8 +91,10 @@
 .navbar-container{
     display: flex;
     gap: 36px;
+    position: static;
     align-items: center;
     .btn-changeLanguage{
+        position: static;
         cursor: pointer;
         border: 1px solid #dadce0;
         display: flex;
@@ -102,6 +104,38 @@
         width: 125px;
         font-weight: 500;
         border-radius: 6px;
+        // &:hover .dropdown{
+        //     display: block;
+        // }
+        .dropdown{
+            top: 100%;
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background-color: #fff;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            ul{
+                display: flex;
+                flex-wrap: wrap;
+                max-height: 300px;
+                overflow: auto;
+                li{
+                    margin: 10px 3px;
+                    text-align: center;
+                    min-width: 120px;
+                    // border: 1px solid #ccc;
+                    border-radius: 6px;
+                    padding: 5px 10px;
+                    cursor: pointer;
+                    transition: all linear 0.2s;
+                    &:hover{
+                        border-color: #1A73e8;
+                    }
+                }
+            }
+            
+        }
      }
      .sunny-icon{
         font-size: 2rem;

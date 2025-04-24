@@ -55,11 +55,14 @@
                         background-color: #f0f2f5;
                         border-radius: 16px;
                         padding: 5px 10px;
+                        aria-label{
+                            font-size: 2rem !important;
+                        }
                         .author-name-cmt{
                             font-weight: 600;
                             font-size: 1.3rem;
                         }
-                    p {
+                         p {
                         margin-top: 5px;
                         // min-width: 100px;
                         max-width: 100%;

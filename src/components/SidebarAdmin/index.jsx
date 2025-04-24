@@ -1,4 +1,12 @@
-import { Code } from "@mui/icons-material";
+import {
+  Code,
+  EditNote,
+  Home,
+  ManageAccounts,
+  NoteAdd,
+  PermContactCalendar,
+  PersonAdd,
+} from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
 import "./SidebarAdmin.scss";
 import { Link, useLocation, useParams } from "react-router-dom";
@@ -24,25 +32,43 @@ export default function SidebarAdmin() {
 
   const [activeIndex, setActiveIndex] = useState(""); // hoặc null nếu chưa chọn gì
   const menuItemsAdmin = [
-    { label: "Trang chủ", href: "/admin", tag: "" },
-    { label: "Đăng bài viết", href: "/admin/upload-post", tag: "upload-post" },
-    { label: "Quản lý bài viết", href: "/admin/manager", tag: "manager" },
+    { label: "Trang chủ", href: "/admin", tag: "", icon: <Home /> },
+    {
+      label: "Đăng bài viết",
+      href: "/admin/upload-post",
+      tag: "upload-post",
+      icon: <NoteAdd />,
+    },
+    {
+      label: "Quản lý bài viết",
+      href: "/admin/manager",
+      tag: "manager",
+      icon: <EditNote />,
+    },
     {
       label: "Quản lý trang cá nhân",
       href: "/admin/manager-profile",
       tag: "manager-profile",
+      icon: <ManageAccounts />,
+    },
+    {
+      label: "Quản lý người dùng",
+      href: "/admin/manager-user",
+      tag: "manager-user",
+      icon: <PersonAdd />,
     },
   ];
 
   const menuItemsUser = [
-    { label: "Trang chủ", href: "/admin", tag: "" },
+    { label: "Trang chủ", href: "/admin", tag: "", icon: <Home /> },
     {
       label: "Quản lý trang cá nhân",
       href: "/admin/manager-profile",
       tag: "manager-profile",
+      icon: <ManageAccounts />,
     },
   ];
-  console.log(role);
+  // console.log(role);
 
   return (
     <>
@@ -65,7 +91,7 @@ export default function SidebarAdmin() {
                   }
                   to={item.href}
                 >
-                  <Code className="feature-icon" />
+                  {item.icon}
                   <span>{item.label}</span>
                 </Link>
               </li>

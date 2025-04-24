@@ -12,6 +12,32 @@
     h3{
         color: #3d5170;
         font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .uploadAvt-wrap{
+        display: flex;
+        .changeAvt{
+            display: flex;
+            flex-direction: column;
+            // align-items: center;
+        }
+        .btn-upload-avt{
+            margin-top: 1.5rem;
+        }
+        .avt-border{
+            width: 390px;
+            height: 230px;
+            border-radius: 12px;
+            box-shadow: 0 2px 0 rgba(90, 97, 105, .11), 0 4px 8px rgba(90, 97, 105, .12), 0 10px 10px rgba(90, 97, 105, .06), 0 7px 70px rgba(90, 97, 105, .1);
+            overflow: hidden;
+            cursor: pointer;
+            img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
     }
 }
 .edit-container{
@@ -152,7 +178,7 @@
                 display: flex;
                 align-items: center;
                 padding: 1.5rem 2.5rem;
-                border-top: 1px solid #ccc;
+              
                 .add-icon{
                     cursor: pointer;
                     height: 35px;
@@ -194,7 +220,7 @@
 }
 
 .MuiDialog-paper{
-    width: 600px;
+    min-width: 600px;
     font-size: 1.5rem;
     h2{
         font-size: 1.6rem;

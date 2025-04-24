@@ -6,7 +6,7 @@
     border: 2px solid #ececec;
     .content-card{
         margin-top: 1rem;
-        min-height: 220px;
+        min-height: 300px;
         padding: 0 1.2rem;
         .title-card{
             font-size: 2rem;
@@ -24,7 +24,7 @@
             background-color: #f5f6f7;
             margin-right: 1.5rem;
             padding: 0.2rem 1.2rem;
-            text-transform: capitalize;
+            // text-transform: capitalize;
         }
     }
     .infoPost{
@@ -51,3 +51,13 @@
         object-fit: cover;
     }
 }
+
+.clamp-3-lines {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; 
+    line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 2.5rem;
+  }

@@ -346,7 +346,6 @@ export default function ManagerProfile() {
                   className="btn-upload-avt"
                   variant="outlined"
                   sx={{ padding: "0" }}
-                  // endIcon={<FileUpload />}
                 >
                   <label
                     style={{

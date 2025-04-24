@@ -12,6 +12,7 @@ import { BACKEND_URL } from "../../constant";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useAvatar } from "../../AvatarContext";
+import { Tooltip } from "@mui/material";
 
 export default function DetailPost() {
   const { avatar } = useAvatar();
@@ -25,6 +26,20 @@ export default function DetailPost() {
   const [post, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
   const getPosts = async () => {
+    try {
+      const response = await axios.get(`${baseApi}/Post/${postId}`);
+      // console.log("Danh sách bài viết chi tiết:", response.data);
+      return response.data; // Trả về để sử dụng nơi khác
+    } catch (error) {
+      console.error(
+        "Lỗi khi lấy bài viết chi tiết:",
+        error.response?.data || error.message
+      );
+      return []; // Trả mảng rỗng nếu lỗi
+    }
+  };
+
+  const getInfoAuthor = async () => {
     try {
       const response = await axios.get(`${baseApi}/Post/${postId}`);
       // console.log("Danh sách bài viết chi tiết:", response.data);
@@ -262,9 +277,38 @@ export default function DetailPost() {
                   </div>
                   <div>
                     <div className="detail-comment">
-                      <span className="author-name-cmt">
-                        {item?.author?.userName}
-                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "3px",
+                        }}
+                      >
+                        <span className="author-name-cmt">
+                          {item?.author?.userName}
+                        </span>
+                        {item?.author?.userName ===
+                          "checkervipnhatvietnam666" && (
+                          <Tooltip
+                            slotProps={{
+                              tooltip: {
+                                sx: {
+                                  fontSize: "1rem",
+                                },
+                              },
+                            }}
+                            title="Admin"
+                            placement="right-start"
+                          >
+                            <img
+                              src="/verified-badge.png"
+                              width="20px"
+                              height="20px"
+                              alt="Logo"
+                            />
+                          </Tooltip>
+                        )}
+                      </div>
                       <p>{item.commentText}</p>
                     </div>
                     <div className="date-cmt">

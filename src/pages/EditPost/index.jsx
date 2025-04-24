@@ -5,6 +5,7 @@ import "./EditPost.scss";
 import {
   Add,
   CalendarMonth,
+  FileUpload,
   Flag,
   PlusOne,
   Public,
@@ -14,7 +15,7 @@ import {
 import { BACKEND_URL } from "../../constant";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Alert, Button } from "@mui/material";
+import { Alert, Button, CircularProgress } from "@mui/material";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -24,7 +25,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 export default function EditPost() {
   const [open, setOpen] = useState(false);
-
+  const [loader, setLoader] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -104,6 +105,7 @@ export default function EditPost() {
       userName: accessToken?.userName,
     },
     categories: [],
+    thumbailURL: "",
   });
 
   const handleChange = (field, value) => {
@@ -211,6 +213,7 @@ export default function EditPost() {
             userName: accessToken?.userName,
           },
           categories: [],
+          thumbailURL: "",
         });
         setTags([]);
         inputRef.current.focus();
@@ -283,8 +286,40 @@ export default function EditPost() {
       }));
     }
   };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    setLoader(true);
+
+    try {
+      const response = await axios.post(
+        `${baseApi}/File/UploadImage`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setLoader(false);
+
+      console.log("Upload thành công:", response.data.imageURL);
+      const uploadedURL = response.data.imageURL;
+
+      setFormData((prev) => ({
+        ...prev,
+        thumbailURL: uploadedURL,
+      }));
+    } catch (error) {
+      console.error("Lỗi khi upload:", error);
+    }
+  };
   console.log(formData);
-  console.log("tags", tags);
 
   return (
     <>
@@ -307,6 +342,64 @@ export default function EditPost() {
       <div className="titlePost-wrap">
         <span>Blog Posts</span>
         <h3>Thêm vài viết mới</h3>
+        <div className="uploadAvt-wrap">
+          <div className="changeAvt">
+            <div className="avt-border">
+              {loader ? (
+                <div
+                  className="wrapLoader"
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    height: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <CircularProgress />
+                </div>
+              ) : null}
+
+              <img
+                src={
+                  formData.thumbailURL
+                    ? formData.thumbailURL
+                    : "https://www.lioncare.co.uk/wordpress/wp-content/themes/evolve-plus/assets/images/no-thumbnail.jpg"
+                }
+                alt="avt"
+              />
+            </div>
+
+            <Button
+              className="btn-upload-avt"
+              variant="outlined"
+              sx={{ padding: "0" }}
+            >
+              <label
+                style={{
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  display: "flex",
+                  padding: "0.5rem 1rem",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
+                htmlFor="upload-photo"
+              >
+                <p> Tải ảnh bìa lên Tải ảnh bìa lên</p>
+                <FileUpload />
+              </label>
+            </Button>
+            <input
+              style={{ display: "none" }}
+              id="upload-photo"
+              name="upload-photo"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="edit-container">
@@ -410,14 +503,10 @@ export default function EditPost() {
                   <DialogActions>
                     {/* <Button onClick={handleClose}>Disagree</Button> */}
                     <Button onClick={handleClose} autoFocus>
-                      Close
+                      Đóng
                     </Button>
                   </DialogActions>
                 </Dialog>
-                {/* <Button variant="outlined">
-                  <Save />
-                  Lưu bản nháp
-                </Button> */}
               </div>
               <div onClick={handleUploadPost}>
                 <Button variant="contained">

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Header.scss";
 import LanguageIcon from "@mui/icons-material/Language";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {
   ArrowDropDown,
+  GridView,
+  Label,
   Login,
   Logout,
   Person,
@@ -14,8 +16,11 @@ import {
 import Blog from "../../assets/logo-blog.jpg";
 import { useNavigate } from "react-router-dom";
 import { useAvatar } from "../../AvatarContext";
+import axios from "axios";
+import { BACKEND_URL } from "../../constant";
 
-export default function Header() {
+export default function Header({ onFilterChange }) {
+  const [openDropDown, setOpenDropDown] = useState(false);
   const { avatar } = useAvatar();
   const [isOpen, setOpen] = useState(false);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
@@ -26,7 +31,25 @@ export default function Header() {
     localStorage.removeItem("accessToken");
     navigate("/"); // điều hướng sau khi xóa token
   };
-  console.log(avatar);
+
+  const [tags, setTags] = useState([]);
+  const baseApi = BACKEND_URL;
+
+  useEffect(() => {
+    axios
+      .get(`${baseApi}/Category`)
+      .then((response) => {
+        setTags(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch tags:", error);
+      });
+  }, []);
+
+  const handleChangeTag = (tagId) => {
+    onFilterChange(tagId);
+    setOpenDropDown(!openDropDown);
+  };
 
   return (
     <div className="header-container">
@@ -43,10 +66,33 @@ export default function Header() {
         <div className="btn-switch">
           <Sunny className="sunny-icon" />
         </div>
-        <div className="btn-changeLanguage">
-          <LanguageIcon />
-          <span>Tiếng Việt</span>
+        <div
+          onClick={() => {
+            setOpenDropDown(!openDropDown);
+          }}
+          className="btn-changeLanguage"
+        >
+          <span>Phân loại</span>
           <ArrowDropDownIcon />
+          {openDropDown && (
+            <div className="dropdown">
+              <ul>
+                {tags !== undefined &&
+                  tags.map((item, index) => {
+                    return (
+                      <li
+                        onClick={() => {
+                          handleChangeTag(item.categoryId);
+                        }}
+                        key={index}
+                      >
+                        {item.categoryName}
+                      </li>
+                    );
+                  })}
+              </ul>
+            </div>
+          )}
         </div>
         {hasToken ? (
           <div
@@ -72,7 +118,7 @@ export default function Header() {
                 <ul>
                   <a href="/admin">
                     <li>
-                      <Person />
+                      <GridView />
                       <span>Admin</span>
                     </li>
                   </a>

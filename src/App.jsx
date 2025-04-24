@@ -15,6 +15,7 @@ import ManagerPost from "./pages/ManagerPost";
 import ManagerProfile from "./pages/ManagerProfile";
 import { AvatarProvider } from "./AvatarContext";
 import ForgetPage from "./pages/ForgetPage";
+import ManagerUser from "./pages/ManagerUser";
 
 function App() {
   const baseApi = BACKEND_URL;
@@ -34,15 +35,57 @@ function App() {
       return []; // Trả mảng rỗng nếu lỗi
     }
   };
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [filter, setFilter] = useState("");
+
+  // useEffect(() => {
+  //   console.log(filter);
+  //   if (filter) {
+  //     // Gọi API theo giá trị từ Header gửi về
+  //     fetchData(filter);
+  //   }
+  // }, [filter]);
+
+  // const fetchData = async (filterValue) => {
+  //   console.log("Gọi API với filter:", filterValue);
+  //   try {
+  //     const response = await axios.get(
+  //       `${baseApi}/Post/ByCategory/${filterValue}`
+  //     );
+  //     console.log("Danh sách bài viết:", response.data);
+  //     setPosts(response.data);
+  //     // return response.data; // Trả về để sử dụng nơi khác
+  //   } catch (error) {
+  //     console.error(
+  //       "Lỗi khi lấy bài viết:",
+  //       error.response?.data || error.message
+  //     );
+  //     return []; // Trả mảng rỗng nếu lỗi
+  //   }
+  // };
 
   useEffect(() => {
     const fetchPosts = async () => {
       const data = await getPosts();
       setPosts(data);
+      setFilteredPosts(data); // hiển thị tất cả ban đầu
     };
 
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    if (!filter || filter.includes("67fd43e0d84b48830ccc0e22")) {
+      setFilteredPosts(posts);
+    } else {
+      const filtered = posts.filter((post) =>
+        post.categories?.some((cat) => filter.includes(cat.categoryId))
+      );
+      setFilteredPosts(filtered);
+    }
+  }, [filter, posts]);
+
+  console.log(filteredPosts);
 
   return (
     <BrowserRouter>
@@ -79,8 +122,8 @@ function App() {
         <Route
           path="/"
           element={
-            <UserLayout>
-              <HomePage data={posts} />
+            <UserLayout onFilterChange={setFilter}>
+              <HomePage data={filteredPosts} />
             </UserLayout>
           }
         />
@@ -130,6 +173,16 @@ function App() {
             </AdminLayout>
           }
         />
+
+        <Route
+          path="/admin/manager-user"
+          element={
+            <AdminLayout>
+              <ManagerUser />
+            </AdminLayout>
+          }
+        />
+
         <Route
           path="/admin/manager-profile"
           element={
