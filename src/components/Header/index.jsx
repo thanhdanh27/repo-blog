@@ -46,9 +46,38 @@ export default function Header({ onFilterChange }) {
       });
   }, []);
 
-  const handleChangeTag = (tagId) => {
-    onFilterChange(tagId);
-    setOpenDropDown(!openDropDown);
+  const [selectedTags, setSelectedTags] = useState([
+    "67fd43e0d84b48830ccc0e22",
+  ]);
+
+  const ALL_TAG_ID = "67fd43e0d84b48830ccc0e22";
+
+  const handleTagClick = (tag) => {
+    let newSelectedTags = [...selectedTags];
+
+    // Nếu click vào "All"
+    if (tag === ALL_TAG_ID) {
+      newSelectedTags = [ALL_TAG_ID]; // Chỉ chọn "All"
+    } else {
+      // Nếu đang chọn "All", bỏ nó ra
+      if (newSelectedTags.includes(ALL_TAG_ID)) {
+        newSelectedTags = [];
+      }
+
+      // Nếu đã chọn tag → gỡ ra
+      if (newSelectedTags.includes(tag)) {
+        newSelectedTags = newSelectedTags.filter((t) => t !== tag);
+      } else {
+        // Nếu chưa chọn → thêm vào
+        newSelectedTags.push(tag);
+      }
+    }
+
+    // Nếu không còn tag nào được chọn, có thể auto chọn lại "All"
+    // if (newSelectedTags.length === 0) newSelectedTags = [ALL_TAG_ID];
+
+    setSelectedTags(newSelectedTags);
+    onFilterChange(newSelectedTags);
   };
 
   return (
@@ -66,25 +95,37 @@ export default function Header({ onFilterChange }) {
         <div className="btn-switch">
           <Sunny className="sunny-icon" />
         </div>
-        <div
-          onClick={() => {
-            setOpenDropDown(!openDropDown);
-          }}
-          className="btn-changeLanguage"
-        >
-          <span>Phân loại</span>
-          <ArrowDropDownIcon />
+        <div className="btn-changeLanguage">
+          <div
+            onClick={() => {
+              setOpenDropDown(!openDropDown);
+            }}
+            style={{
+              padding: "0.5rem 1rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span>Phân loại</span>
+            <ArrowDropDownIcon />
+          </div>
           {openDropDown && (
             <div className="dropdown">
               <ul>
                 {tags !== undefined &&
-                  tags.map((item, index) => {
+                  tags.map((item) => {
                     return (
                       <li
+                        className={
+                          selectedTags.includes(item.categoryId)
+                            ? "border-active"
+                            : "border-none"
+                        }
                         onClick={() => {
-                          handleChangeTag(item.categoryId);
+                          handleTagClick(item.categoryId);
                         }}
-                        key={index}
+                        key={item.categoryId}
                       >
                         {item.categoryName}
                       </li>

@@ -9,6 +9,12 @@
     padding: 1rem 1rem;
     z-index: 999;
     background-color: #fff;
+    .border-active{
+        border: 1px solid #0263d2 !important;
+    }
+    .border-none{
+        border: 1px solid transparent ;
+    }
     .accountMenu{
         display: flex;
         align-items: center;
@@ -97,10 +103,6 @@
         position: static;
         cursor: pointer;
         border: 1px solid #dadce0;
-        display: flex;
-        align-items: center;
-        padding: 0.5rem 1rem;
-        justify-content: space-around;
         width: 125px;
         font-weight: 500;
         border-radius: 6px;
@@ -128,7 +130,7 @@
                     border-radius: 6px;
                     padding: 5px 10px;
                     cursor: pointer;
-                    transition: all linear 0.2s;
+                    transition: all linear 0.1s;
                     &:hover{
                         border-color: #1A73e8;
                     }

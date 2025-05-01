@@ -63,6 +63,7 @@ export default function EditPost() {
               userName: data?.author?.userName,
             },
             categories: data.categories || [],
+            thumbailURL: data.thumbailURL,
           });
         })
         .catch((err) => {

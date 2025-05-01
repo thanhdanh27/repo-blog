@@ -1,7 +1,11 @@
 import {
   Alert,
   Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   Snackbar,
   styled,
   Table,
@@ -51,10 +55,32 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function ManagerUser() {
-  const [postsByAuthorId, setPostsByAuthorId] = useState([]);
   const [user, setUser] = useState([]);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
   const baseApi = BACKEND_URL;
+  const [role, setRole] = useState([]);
+  const [roleSelected, setRoleSelected] = useState("");
+
+  const getRole = async () => {
+    try {
+      const response = await axios.get(`${baseApi}/Role`);
+      // console.log("Danh sách user:", response.data);
+
+      return response.data; // Trả về để sử dụng nơi khác
+    } catch (error) {
+      console.error("Lỗi khi lấy user:", error.response?.data || error.message);
+      return []; // Trả mảng rỗng nếu lỗi
+    }
+  };
+
+  const [formData, setFormData] = useState({
+    userId: "",
+    userName: "",
+    email: "",
+    dob: null,
+    role: [],
+    newPassword: "",
+  });
 
   const navigate = useNavigate();
 
@@ -69,19 +95,14 @@ export default function ManagerUser() {
     setUser(data);
   };
 
-  const handleDeletePost = async (postId) => {
+  const handleDeleteUser = async (userId) => {
     try {
-      const response = await axios.delete(`${baseApi}/Post/${postId}`);
-      console.log("Xoá thành công:");
+      const response = await axios.delete(`${baseApi}/User/${userId}`);
+      console.log("Xoá user thành công:");
       onReload();
-      setState({ ...state, open: true });
-
-      // 👉 Tự động ẩn sau 3 giây
-      setTimeout(() => {
-        setState((prev) => ({ ...prev, open: false }));
-      }, 2000);
+      setState3(!state3);
     } catch (error) {
-      console.error("Lỗi xoá bài viết:", error.response?.data || error.message);
+      console.error("Lỗi xoá user:", error.response?.data || error.message);
     }
   };
 
@@ -96,12 +117,37 @@ export default function ManagerUser() {
     }
   };
 
+  const getUserById = async (id) => {
+    try {
+      const response = await axios.get(`${baseApi}/User/${id}`);
+      // console.log("Thông tin user:", response.data);
+      const userData = response.data;
+      // console.log(userData.role);
+      setFormData({
+        userId: userData.userId,
+        userName: userData.userName || "",
+        email: userData.email || "",
+        avatarURL: userData.avatarURL,
+        dob: userData.dob,
+        role: userData.role,
+      });
+    } catch (error) {
+      console.error("Lỗi khi lấy user:", error.response?.data || error.message);
+      return []; // Trả mảng rỗng nếu lỗi
+    }
+  };
+
   useEffect(() => {
     const fetchAllUsers = async () => {
       const data = await getAllUsers();
       setUser(data);
     };
+    const fetchRole = async () => {
+      const data = await getRole();
+      setRole(data);
+    };
     fetchAllUsers();
+    fetchRole();
   }, []);
 
   const [state, setState] = useState({
@@ -111,13 +157,18 @@ export default function ManagerUser() {
   });
 
   const { vertical, horizontal, open } = state;
+
+  const [state2, setState2] = useState(false);
+  const [state3, setState3] = useState(false);
+
   const handleClose = () => {
     setState({ ...state, open: false });
   };
 
   const [openDialog, setOpen] = useState(false);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (id) => {
+    getUserById(id);
     setOpen(true);
   };
 
@@ -125,8 +176,132 @@ export default function ManagerUser() {
     setOpen(false);
   };
 
+  const handleClose2 = () => {
+    setState2(!state2);
+  };
+
+  const handleClose3 = () => {
+    setState3(!state3);
+  };
+
+  const handleDateChange = (date) => {
+    setFormData({
+      ...formData,
+      dob: date.format("YYYY-MM-DD"),
+    });
+  };
+
+  const handleChangeRole = (event) => {
+    const selectedRoleId = event.target.value; // Đây là `roleId` đã chọn
+    setRoleSelected(selectedRoleId);
+    const selectedRoleObj = role.find((r) => r.roleId === selectedRoleId); // Tìm role object tương ứng
+
+    if (selectedRoleObj) {
+      setFormData((prev) => ({
+        ...prev,
+        role: [selectedRoleObj], // Cập nhật lại formData với role object
+      }));
+    }
+  };
+
+  const handleSaveInfo = async () => {
+    if (roleSelected !== "") {
+      try {
+        const response = await axios.post(`${baseApi}/User/AddRoleToUser`, {
+          userId: formData.userId,
+          roleId: roleSelected,
+        });
+
+        console.log("Cập nhật role thành công:", response.data);
+      } catch (error) {
+        console.error("Lỗi khi cập nhật role user:", error);
+      }
+    }
+
+    try {
+      const response = await axios.put(
+        `${baseApi}/User`, // ví dụ API của bạn
+        formData
+      );
+      onReload();
+      console.log("Cập nhật user thành công:", response.data);
+      setState({ ...state, open: true });
+    } catch (error) {
+      console.error("Lỗi khi cập nhật user:", error);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    try {
+      const response = await axios.post(`${baseApi}/Auth/RenewPassword`, {
+        userId: formData.userId,
+        newPassword: formData.newPassword,
+      });
+      setFormData((prev) => ({
+        ...prev,
+        newPassword: "",
+      }));
+      setState2(!state2);
+      console.log("Cập nhật pass mới thành công:", response.data);
+    } catch (error) {
+      console.error("Lỗi khi cập nhật pass mới:", error);
+    }
+  };
+  console.log("render");
+
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={open}
+        onClose={handleClose}
+        autoHideDuration={2000}
+        key="snackbar-sucess"
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã cập nhật user thành công !
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={state2}
+        onClose={handleClose2}
+        autoHideDuration={2000}
+        key="snackbar-sucessNewPassword"
+      >
+        <Alert
+          onClose={handleClose2}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã cập nhật mật khẩu mới thành công !
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={state3}
+        onClose={handleClose3}
+        autoHideDuration={2000}
+        key="snackbar-sucessDelete"
+      >
+        <Alert
+          onClose={handleClose3}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã xóa user thành công !
+        </Alert>
+      </Snackbar>
+
       <Dialog
         open={openDialog}
         onClose={handleClose}
@@ -138,33 +313,33 @@ export default function ManagerUser() {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <div className="formProfile">
+            <div style={{ marginTop: "20px" }} className="formProfile">
               <div className="fieldInputProfile">
                 <TextField
                   id="outlined-basic"
                   label="Username"
                   variant="outlined"
-                  // value={formData.userName}
+                  value={formData.userName}
                   // disabled={!isEdit}
-                  // onChange={(e) =>
-                  //   setFormData((prev) => ({
-                  //     ...prev,
-                  //     userName: e.target.value,
-                  //   }))
-                  // }
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      userName: e.target.value,
+                    }))
+                  }
                 />
                 <TextField
                   id="outlined-basic"
                   label="Email"
                   variant="outlined"
-                  // value={formData.email}
+                  value={formData.email}
                   // disabled={!isEdit}
-                  // onChange={(e) =>
-                  //   setFormData((prev) => ({
-                  //     ...prev,
-                  //     email: e.target.value,
-                  //   }))
-                  // }
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                  }
                 />
 
                 <LocalizationProvider
@@ -172,34 +347,103 @@ export default function ManagerUser() {
                   dateAdapter={AdapterDayjs}
                 >
                   <DatePicker
-                    // disabled={!isEdit}
-                    // value={
-                    //   dayjs(formData.dob).isValid() ? dayjs(formData.dob) : null
-                    // }
-                    // onChange={handleDateChange}
+                    value={
+                      dayjs(formData.dob).isValid() ? dayjs(formData.dob) : null
+                    }
+                    onChange={handleDateChange}
                     label="Ngày sinh"
                   />
                 </LocalizationProvider>
+
+                <FormControl sx={{ width: "212px" }}>
+                  <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={
+                      formData.role.length > 0 ? formData.role[0].roleId : ""
+                    }
+                    label="Role"
+                    onChange={handleChangeRole}
+                    renderValue={(selected) => {
+                      const selectedRole = role.find(
+                        (r) => r.roleId === selected
+                      );
+                      return selectedRole ? selectedRole.roleName : "";
+                    }}
+                  >
+                    {role.map((item) => (
+                      <MenuItem key={item.roleId} value={item.roleId}>
+                        {item.roleName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+              <Button
+                onClick={() => {
+                  handleSaveInfo();
+                }}
+                style={{ marginTop: "1rem" }}
+                size="large"
+                variant="contained"
+              >
+                Lưu thay đổi
+              </Button>
+            </div>
+            <div
+              style={{ marginTop: "3rem", border: "none" }}
+              className="formProfile"
+            >
+              <div className="fieldInputProfile">
                 <TextField
-                  // disabled={!isEdit}
                   id="outlined-basic"
-                  label="Role"
+                  label="UserId"
                   variant="outlined"
+                  value={formData.userId}
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  label="Mật khẩu mới"
+                  variant="outlined"
+                  value={formData.newPassword}
+                  // disabled={!isEdit}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      newPassword: e.target.value,
+                    }))
+                  }
                 />
               </div>
+              <Button
+                style={{ marginTop: "1rem" }}
+                size="large"
+                variant="contained"
+                onClick={() => {
+                  handleUpdatePassword();
+                }}
+              >
+                Cấp lại mật khẩu
+              </Button>
             </div>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClickClose} autoFocus>
+          {/* <Button onClick={handleClickClose} autoFocus>
             Cập nhật
-          </Button>
+          </Button> */}
           <Button onClick={handleClickClose} autoFocus>
             Đóng
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
+      {/* <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={open}
         onClose={handleClose}
@@ -213,7 +457,7 @@ export default function ManagerUser() {
         >
           Đã xóa thành công !
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -263,7 +507,11 @@ export default function ManagerUser() {
                       : "Null"}
                   </StyledTableCell>
                   <StyledTableCell className="action-wrap" align="right">
-                    <span onClick={handleClickOpen}>
+                    <span
+                      onClick={() => {
+                        handleClickOpen(item.userId);
+                      }}
+                    >
                       <img
                         style={{ cursor: "pointer" }}
                         src={editIcon}
@@ -273,7 +521,11 @@ export default function ManagerUser() {
                       />
                     </span>
 
-                    <span>
+                    <span
+                      onClick={() => {
+                        handleDeleteUser(item.userId);
+                      }}
+                    >
                       <img
                         style={{ cursor: "pointer", marginLeft: "1rem" }}
                         src={deleteIcon}

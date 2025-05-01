@@ -10,7 +10,6 @@ export default function HomePage({ data }) {
   return (
     <div className="home-container">
       <CrumBoard />
-
       <ListPost data={data} />
     </div>
   );

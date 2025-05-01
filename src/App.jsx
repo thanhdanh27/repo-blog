@@ -75,17 +75,21 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!filter || filter.includes("67fd43e0d84b48830ccc0e22")) {
-      setFilteredPosts(posts);
-    } else {
-      const filtered = posts.filter((post) =>
-        post.categories?.some((cat) => filter.includes(cat.categoryId))
-      );
-      setFilteredPosts(filtered);
-    }
+    const shouldShowAll =
+      !filter ||
+      filter.length === 0 ||
+      filter.includes("67fd43e0d84b48830ccc0e22");
+
+    setFilteredPosts(
+      shouldShowAll
+        ? posts
+        : posts.filter((post) =>
+            post.categories?.some((cat) => filter.includes(cat.categoryId))
+          )
+    );
   }, [filter, posts]);
 
-  console.log(filteredPosts);
+  // console.log(filteredPosts);
 
   return (
     <BrowserRouter>
