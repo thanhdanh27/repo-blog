@@ -11,7 +11,7 @@ export default function ListPost({ data }) {
       <Grid container spacing={4}>
         {data.map((item, index) => {
           return (
-            <Grid key={index} size={4} sx={{ maxWidth: 390 }}>
+            <Grid key={index} size={4} sx={{ minWidth: 390 }}>
               <PostCard data={item} />
             </Grid>
           );
