@@ -93,7 +93,16 @@ export default function Header({ onFilterChange }) {
           <input type="text" placeholder="Tìm kiếm..." />
         </div>
         <div className="btn-switch">
-          <Sunny className="sunny-icon" />
+          <Link
+            style={{
+              fontWeight: "500",
+              padding: "8px 15px",
+              borderRadius: "16px",
+            }}
+            to="/shop"
+          >
+            Shop
+          </Link>
         </div>
         <div className="btn-changeLanguage">
           <div

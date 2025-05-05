@@ -16,6 +16,7 @@ import ManagerProfile from "./pages/ManagerProfile";
 import { AvatarProvider } from "./AvatarContext";
 import ForgetPage from "./pages/ForgetPage";
 import ManagerUser from "./pages/ManagerUser";
+import ShopPage from "./pages/Shop";
 
 function App() {
   const baseApi = BACKEND_URL;
@@ -137,6 +138,15 @@ function App() {
           element={
             <UserLayout>
               <DetailPost />
+            </UserLayout>
+          }
+        />
+
+        <Route
+          path="/shop"
+          element={
+            <UserLayout>
+              <ShopPage data={posts} />
             </UserLayout>
           }
         />
