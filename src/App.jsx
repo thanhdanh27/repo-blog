@@ -146,7 +146,7 @@ function App() {
           path="/shop"
           element={
             <UserLayout>
-              <ShopPage data={posts} />
+              <ShopPage />
             </UserLayout>
           }
         />

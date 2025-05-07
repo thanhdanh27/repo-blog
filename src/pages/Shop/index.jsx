@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Shop.scss";
 import {
   Autocomplete,
@@ -13,14 +13,40 @@ import axios from "axios";
 import { BACKEND_URL } from "../../constant";
 import { AddShoppingCart, Close, IosShare } from "@mui/icons-material";
 
-export default function ShopPage({ data }) {
+export default function ShopPage() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const baseApi = BACKEND_URL;
+
+  const [data, setData] = useState([]);
+
+  const getPostsShop = async () => {
+    try {
+      const response = await axios.get(`${baseApi}/Post?type=ProjectSource`);
+
+      return response.data; // Trả về để sử dụng nơi khác
+    } catch (error) {
+      console.error(
+        "Lỗi khi lấy bài viết:",
+        error.response?.data || error.message
+      );
+      return []; // Trả mảng rỗng nếu lỗi
+    }
+  };
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const data = await getPostsShop();
+      setData(data);
+    };
+
+    fetchPosts();
+  }, []);
 
   const [post, setPost] = useState([]);
 
-  console.log(post);
+  console.log(data);
 
   return (
     <div className="shop-container">
@@ -66,7 +92,7 @@ export default function ShopPage({ data }) {
                 </div>
                 <div className="boxPrice">
                   <span style={{ fontSize: "2rem", fontWeight: "600" }}>
-                    $45
+                    ${post.price}
                   </span>
                   <br />
                   <span
@@ -97,7 +123,7 @@ export default function ShopPage({ data }) {
                       >
                         $
                       </h3>
-                      <input type="number" placeholder="45" />
+                      <input type="number" placeholder={post.price} />
                     </div>
                     <div
                       className="btn-buy"
@@ -173,7 +199,7 @@ export default function ShopPage({ data }) {
                       fontSize: "1.6rem",
                     }}
                   >
-                    $45
+                    ${item.price}
                   </p>
                 </div>
               </div>

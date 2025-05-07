@@ -2,6 +2,9 @@
     font-size: 1.4rem !important;
     font-weight: 500;
 }
+.item-type {
+    font-size: 1.3rem !important;
+}
 .titlePost-wrap{
     span{
         color: #818ea3;
@@ -17,6 +20,38 @@
 
     .uploadAvt-wrap{
         display: flex;
+        gap: 50px;
+        .typePost{
+            display: flex;
+            flex-direction: column;
+            margin-top: 7px;
+            #outlined-select-currency{
+                font-size: 1.5rem !important;
+            }
+            
+            input{
+                font-size: 1.5rem !important;
+               
+            }
+            label{
+                font-size: 1.3rem;
+            }
+            .srcPost{
+                min-width: 220px;
+               
+                background-color: #fff;
+            }
+            .pricePost{
+                margin-top: 30px;
+               
+                background-color: #fff;
+            }
+            .type{
+                margin-top: 30px;
+                background-color: #fff;
+               
+            }
+        }
         .changeAvt{
             display: flex;
             flex-direction: column;

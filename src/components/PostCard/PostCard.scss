@@ -6,7 +6,7 @@
     border: 2px solid #ececec;
     .content-card{
         margin-top: 1rem;
-        min-height: 300px;
+        height: 300px;
         padding: 0 1.2rem;
         .title-card{
             font-size: 2rem;
@@ -28,6 +28,7 @@
         }
     }
     .infoPost{
+        background-color: #fff;
         position: absolute;
         width: 100%;
         bottom: 0;

@@ -15,7 +15,13 @@ import {
 import { BACKEND_URL } from "../../constant";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Alert, Button, CircularProgress } from "@mui/material";
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -24,6 +30,17 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 export default function EditPost() {
+  const currencies = [
+    {
+      value: "Post",
+      label: "Post",
+    },
+    {
+      value: "ProjectSource",
+      label: "ProjectSource",
+    },
+  ];
+
   const [open, setOpen] = useState(false);
   const [loader, setLoader] = useState(false);
   const handleClickOpen = () => {
@@ -64,6 +81,9 @@ export default function EditPost() {
             },
             categories: data.categories || [],
             thumbailURL: data.thumbailURL,
+            sourceURL: data.sourceURL,
+            type: data.type,
+            price: data.price,
           });
         })
         .catch((err) => {
@@ -107,6 +127,9 @@ export default function EditPost() {
     },
     categories: [],
     thumbailURL: "",
+    type: "",
+    sourceURL: "",
+    price: 0,
   });
 
   const handleChange = (field, value) => {
@@ -215,6 +238,9 @@ export default function EditPost() {
           },
           categories: [],
           thumbailURL: "",
+          type: "",
+          sourceURL: "",
+          price: "",
         });
         setTags([]);
         inputRef.current.focus();
@@ -320,7 +346,7 @@ export default function EditPost() {
       console.error("Lỗi khi upload:", error);
     }
   };
-  console.log(formData);
+  console.log("formData:", formData);
 
   return (
     <>
@@ -399,6 +425,50 @@ export default function EditPost() {
               accept="image/*"
               onChange={handleFileChange}
             />
+          </div>
+          <div className="typePost">
+            <TextField
+              className="srcPost"
+              id="outlined-basic"
+              label="Source"
+              variant="outlined"
+              value={formData.sourceURL}
+              onChange={(e) => handleChange("sourceURL", e.target.value)}
+            />
+            <TextField
+              className="pricePost"
+              id="outlined-number"
+              onChange={(e) => handleChange("price", +e.target.value)}
+              label="Giá"
+              type="number"
+              value={formData.price}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
+            />
+
+            <TextField
+              className="type"
+              id="outlined-select-currency"
+              select
+              label="Phân loại"
+              value={formData.type}
+            >
+              {currencies.map((option) => (
+                <MenuItem
+                  className="item-type"
+                  onClick={() => {
+                    handleChange("type", option.value);
+                  }}
+                  key={option.value}
+                  value={option.value}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
           </div>
         </div>
       </div>
