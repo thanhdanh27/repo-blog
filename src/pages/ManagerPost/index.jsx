@@ -42,6 +42,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function ManagerPost() {
   const [postsByAuthorId, setPostsByAuthorId] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
   const baseApi = BACKEND_URL;
 
@@ -54,8 +55,8 @@ export default function ManagerPost() {
 
   // ✅ Hàm reload lại danh sách
   const onReload = async () => {
-    const data = await getPostsByAuthorId();
-    setPostsByAuthorId(data);
+    const data = await getAllPosts();
+    setAllPosts(data);
   };
 
   const handleDeletePost = async (postId) => {
@@ -73,12 +74,26 @@ export default function ManagerPost() {
       console.error("Lỗi xoá bài viết:", error.response?.data || error.message);
     }
   };
-  const getPostsByAuthorId = async () => {
+  // const getPostsByAuthorId = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${baseApi}/Post/ByAuthor/${accessToken.userId}`
+  //     );
+  //     console.log("Danh sách bài viết theo user:", response.data);
+  //     return response.data; // Trả về để sử dụng nơi khác
+  //   } catch (error) {
+  //     console.error(
+  //       "Lỗi khi lấy bài viết:",
+  //       error.response?.data || error.message
+  //     );
+  //     return []; // Trả mảng rỗng nếu lỗi
+  //   }
+  // };
+
+  const getAllPosts = async () => {
     try {
-      const response = await axios.get(
-        `${baseApi}/Post/ByAuthor/${accessToken.userId}`
-      );
-      console.log("Danh sách bài viết theo user:", response.data);
+      const response = await axios.get(`${baseApi}/Post`);
+      console.log("Danh sách bài viết :", response.data);
       return response.data; // Trả về để sử dụng nơi khác
     } catch (error) {
       console.error(
@@ -88,10 +103,11 @@ export default function ManagerPost() {
       return []; // Trả mảng rỗng nếu lỗi
     }
   };
+
   useEffect(() => {
     const fetchPostsByAuthorId = async () => {
-      const data = await getPostsByAuthorId();
-      setPostsByAuthorId(data);
+      const data = await getAllPosts();
+      setAllPosts(data);
     };
     fetchPostsByAuthorId();
   }, []);
@@ -135,7 +151,7 @@ export default function ManagerPost() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {postsByAuthorId.map((item, index) => {
+            {allPosts.map((item, index) => {
               return (
                 <StyledTableRow
                   key={index}

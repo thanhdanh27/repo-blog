@@ -39,32 +39,6 @@ function App() {
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [filter, setFilter] = useState("");
 
-  // useEffect(() => {
-  //   console.log(filter);
-  //   if (filter) {
-  //     // Gọi API theo giá trị từ Header gửi về
-  //     fetchData(filter);
-  //   }
-  // }, [filter]);
-
-  // const fetchData = async (filterValue) => {
-  //   console.log("Gọi API với filter:", filterValue);
-  //   try {
-  //     const response = await axios.get(
-  //       `${baseApi}/Post/ByCategory/${filterValue}`
-  //     );
-  //     console.log("Danh sách bài viết:", response.data);
-  //     setPosts(response.data);
-  //     // return response.data; // Trả về để sử dụng nơi khác
-  //   } catch (error) {
-  //     console.error(
-  //       "Lỗi khi lấy bài viết:",
-  //       error.response?.data || error.message
-  //     );
-  //     return []; // Trả mảng rỗng nếu lỗi
-  //   }
-  // };
-
   useEffect(() => {
     const fetchPosts = async () => {
       const data = await getPosts();
@@ -83,7 +57,7 @@ function App() {
 
     setFilteredPosts(
       shouldShowAll
-        ? posts
+        ? posts.filter((post) => post.type === "Post")
         : posts.filter((post) =>
             post.categories?.some((cat) => filter.includes(cat.categoryId))
           )
