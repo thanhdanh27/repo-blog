@@ -22,7 +22,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-
+import deleteIcon from "../../assets/deleteIcon.svg";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -59,19 +59,14 @@ export default function EditPost() {
 
   const { postId } = useParams(); // id sẽ có khi đang edit
   const isEdit = Boolean(postId); // nếu có id nghĩa là đang edit
-  // console.log(isEdit);
 
   useEffect(() => {
     if (isEdit) {
       axios
         .get(`${baseApi}/Post/${postId}`)
         .then((res) => {
-          console.log(res.data);
           const data = res.data;
-          setTags([
-            ...tags,
-            ...data.categories.map((category) => category.categoryName),
-          ]);
+          // setTags([...tags, ...data.categories.map((category) => category)]);
           setFormData({
             title: data.title,
             content: data.content,
@@ -100,8 +95,9 @@ export default function EditPost() {
   const fetchTags = async () => {
     try {
       const response = await axios.get(`${baseApi}/Category`);
-      // console.log(response.data);
-      setTags([...tags, ...response.data.map((item) => item.categoryName)]);
+      setTags(response.data);
+      console.log(response.data);
+      return response.data; // Trả về để sử dụng nơi khác
     } catch (err) {
       setError(err.message || "Có lỗi xảy ra");
     }
@@ -257,6 +253,26 @@ export default function EditPost() {
     }
   };
 
+  const onReload = async () => {
+    const data = await fetchTags();
+    setTags(data);
+  };
+
+  const deletePost = async (id) => {
+    setFormData((prev) => ({
+      ...prev,
+      categories: prev.categories.filter((cat) => cat.categoryId !== id),
+    }));
+
+    try {
+      const response = await axios.delete(`${baseApi}/Category/${id}`);
+      console.log("Xoá thành công:", response.data);
+      onReload();
+    } catch (error) {
+      console.error("Lỗi khi xoá:", error.response?.data || error.message);
+    }
+  };
+
   const handleAddTag = async () => {
     const trimmedValue = inputValue.trim();
 
@@ -267,7 +283,7 @@ export default function EditPost() {
         });
 
         // Thành công
-        setTags([...tags, trimmedValue]);
+        setTags([...tags, { categoryName: trimmedValue }]);
         setInputValue("");
       } catch (err) {
         console.error("Gửi tag thất bại:", err);
@@ -346,7 +362,8 @@ export default function EditPost() {
       console.error("Lỗi khi upload:", error);
     }
   };
-  console.log("formData:", formData);
+  // console.log("formData:", formData);
+  // console.log(tags);
 
   return (
     <>
@@ -552,21 +569,47 @@ export default function EditPost() {
                   <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                       <ul>
-                        {tags.map((item, index) => {
-                          return (
-                            <li key={index} className="itemTag">
-                              <input
-                                checked={formData.categories.some(
-                                  (cat) => cat.categoryName === item
-                                )}
-                                onChange={(e) =>
-                                  handleCategoryToggle(item, e.target.checked)
-                                }
-                                type="checkbox"
-                              />
-                              <span>{item}</span>
-                            </li>
-                          );
+                        {tags?.map((item, index) => {
+                          if (item.categoryId !== "67fd43e0d84b48830ccc0e22") {
+                            return (
+                              <li key={index} className="itemTag">
+                                <div>
+                                  <input
+                                    checked={formData?.categories?.some(
+                                      (cat) =>
+                                        cat.categoryName === item.categoryName
+                                    )}
+                                    onChange={(e) =>
+                                      handleCategoryToggle(
+                                        item.categoryName,
+                                        e.target.checked
+                                      )
+                                    }
+                                    type="checkbox"
+                                  />
+                                  <span style={{ marginLeft: "7px" }}>
+                                    {item.categoryName}
+                                  </span>
+                                </div>
+
+                                <span
+                                  onClick={() => {
+                                    deletePost(item.categoryId);
+                                  }}
+                                >
+                                  <img
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                    src={deleteIcon}
+                                    width="20px"
+                                    height="20px"
+                                    alt="icon"
+                                  />
+                                </span>
+                              </li>
+                            );
+                          }
                         })}
                       </ul>
                     </DialogContentText>
@@ -590,24 +633,6 @@ export default function EditPost() {
           <div className="actionsBox category">
             <span className="titleBox">Thêm phân loại</span>
             <div className="listTag-wrap">
-              {/* <ul>
-                {tags.map((item, index) => {
-                  return (
-                    <li key={index} className="itemTag">
-                      <input
-                        checked={formData.categories.some(
-                          (cat) => cat.categoryName === item
-                        )}
-                        onChange={(e) =>
-                          handleCategoryToggle(item, e.target.checked)
-                        }
-                        type="checkbox"
-                      />
-                      <span>{item}</span>
-                    </li>
-                  );
-                })}
-              </ul> */}
               <div className="addTags-wrap">
                 <div className="inputTag">
                   <input
